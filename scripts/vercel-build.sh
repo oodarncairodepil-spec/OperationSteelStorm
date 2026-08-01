@@ -7,8 +7,14 @@ OUT="$GAME/web"
 GODOT_VERSION="${GODOT_VERSION:-4.5-stable}"
 GODOT_HOME="${GODOT_HOME:-$HOME/godot}"
 TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.5.stable"
+NETWORK_OVERRIDE="$GAME/multiplayer/network_config.local.json"
 
 mkdir -p "$GODOT_HOME" "$TEMPLATE_DIR" "$OUT"
+
+cleanup() {
+  rm -f "$NETWORK_OVERRIDE"
+}
+trap cleanup EXIT
 
 if [[ ! -x "$GODOT_HOME/godot" ]]; then
   echo "Installing Godot $GODOT_VERSION for Vercel build..."
@@ -32,6 +38,17 @@ if [[ ! -f "$TEMPLATE_DIR/web_release.zip" && ! -f "$TEMPLATE_DIR/web_nothreads_
   else
     cp -R /tmp/godot-templates/* "$TEMPLATE_DIR/"
   fi
+fi
+
+if [[ -n "${SIGNALING_URL:-}" ]]; then
+  echo "Writing production signaling override..."
+  cat > "$NETWORK_OVERRIDE" <<EOF
+{
+  "signaling": {
+    "url": "${SIGNALING_URL}"
+  }
+}
+EOF
 fi
 
 echo "Exporting Godot Web build for Vercel..."

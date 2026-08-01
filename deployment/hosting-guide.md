@@ -16,10 +16,12 @@ Requirements:
 - Do not rely on a single vendor
 
 Point `network_config.json` signaling URL to your `wss://` service.
+For Vercel builds, set environment variable `SIGNALING_URL=wss://your-signaling-host.example` so the build injects the correct production signaling endpoint.
 
 ## Signaling server
 
 Deploy the Docker image from `signaling-server/` to a VPS, Railway-like, Render-like, Fly.io-like, or mini PC.
+Do not rely on the Vercel static deployment to host the signaling websocket service.
 
 Use **WSS** behind a reverse proxy (Caddy/nginx/Traefik) with TLS.
 

@@ -90,6 +90,8 @@ Vercel deploy:
 - `vercel.json` builds the Godot Web export during deployment
 - `/` rewrites to `/operation-steelstorm.html`
 - output directory is `game/web`
+- set Vercel env `SIGNALING_URL=wss://your-signaling-host.example`
+- deploy the `signaling-server/` separately; Vercel only hosts the static game client here
 
 LAN browser testing:
 

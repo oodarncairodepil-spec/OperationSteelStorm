@@ -62,6 +62,8 @@ func _apply_runtime_overrides() -> void:
 
 
 static func _resolve_web_signaling_url(configured_url: String) -> String:
+	if _is_explicit_remote_signaling_url(configured_url):
+		return configured_url
 	var page_host := _js_value_as_string("window.location.hostname")
 	if page_host == "":
 		return configured_url
@@ -69,6 +71,28 @@ static func _resolve_web_signaling_url(configured_url: String) -> String:
 	var scheme := "wss" if page_protocol == "https:" else "ws"
 	var port := _port_from_url(configured_url, 8787)
 	return "%s://%s:%d" % [scheme, page_host, port]
+
+
+static func _is_explicit_remote_signaling_url(url: String) -> bool:
+	if url == "":
+		return false
+	var host := _host_from_url(url).to_lower()
+	if host == "" or host == "localhost" or host == "127.0.0.1" or host == "0.0.0.0" or host == "::1":
+		return false
+	return true
+
+
+static func _host_from_url(url: String) -> String:
+	var without_scheme := url
+	var scheme_index := url.find("://")
+	if scheme_index >= 0:
+		without_scheme = url.substr(scheme_index + 3)
+	var host_port := without_scheme.split("/", false, 1)[0]
+	if host_port.begins_with("[") and host_port.contains("]"):
+		return host_port.get_slice("]", 0).trim_prefix("[")
+	if host_port.contains(":"):
+		return host_port.rsplit(":", true, 1)[0]
+	return host_port
 
 
 static func _port_from_url(url: String, fallback: int) -> int:
