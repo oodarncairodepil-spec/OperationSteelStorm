@@ -9,10 +9,12 @@ extends Control
 
 
 func _ready() -> void:
-	_name_edit.text = "Operative"
+	_name_edit.text = SceneManager.pending_join_name if SceneManager.pending_join_name != "" else "Operative"
+	_configure_text_input(_name_edit)
 	_create_button.pressed.connect(_on_create)
 	_join_button.pressed.connect(_on_join)
 	_back_button.pressed.connect(func() -> void: SceneManager.go_to_main_menu())
+	_name_edit.text_submitted.connect(func(_text: String) -> void: _on_create())
 	NetworkManager.connection_failed.connect(_on_fail)
 	_create_button.grab_focus()
 
@@ -25,6 +27,8 @@ func _exit_tree() -> void:
 
 
 func _on_create() -> void:
+	_name_edit.text = _sanitize_player_name(_name_edit.text)
+	SceneManager.pending_join_name = _name_edit.text
 	_status.text = "Connecting to signaling…"
 	if not NetworkManager.lobby_updated.is_connected(_on_lobby_created):
 		NetworkManager.lobby_updated.connect(_on_lobby_created)
@@ -40,8 +44,20 @@ func _on_lobby_created() -> void:
 
 
 func _on_join() -> void:
+	_name_edit.text = _sanitize_player_name(_name_edit.text)
+	SceneManager.pending_join_name = _name_edit.text
 	SceneManager.go_to_join_room(_name_edit.text)
 
 
 func _on_fail(message: String) -> void:
 	_status.text = message
+
+
+func _configure_text_input(edit: LineEdit) -> void:
+	edit.virtual_keyboard_enabled = true
+	edit.virtual_keyboard_show_on_focus = true
+
+
+func _sanitize_player_name(value: String) -> String:
+	var cleaned := value.strip_edges()
+	return cleaned if cleaned != "" else "Operative"
