@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 
 export interface Env {
   SIGNALING_HUB: DurableObjectNamespace<SignalingHub>;
+  ASSET_BUCKET: R2Bucket;
   ALLOWED_ORIGINS?: string;
   ALLOW_LAN_ORIGINS?: string;
   MAX_PLAYERS_PER_ROOM?: string;
@@ -12,6 +13,7 @@ export interface Env {
   RATE_LIMIT_MAX_MESSAGES?: string;
   SIGNALING_MAX_MESSAGE_BYTES?: string;
   SIGNALING_SHARD_NAME?: string;
+  ASSET_BASE_PATH?: string;
 }
 
 type ErrorCode =
@@ -109,6 +111,7 @@ interface RuntimeConfig {
   rateLimitMaxMessages: number;
   maxMessageBytes: number;
   shardName: string;
+  assetBasePath: string;
 }
 
 const ROOM_STORAGE_KEY = "rooms_v1";
@@ -124,11 +127,15 @@ export default {
       return stub.fetch(new Request("https://signaling.internal/health"));
     }
 
+    if (url.pathname.startsWith("/assets/")) {
+      return serveAsset(request, env, config);
+    }
+
     if (url.pathname !== "/" && url.pathname !== "/ws") {
       return Response.json(
         {
           ok: true,
-          endpoints: ["/health", "/ws"],
+          endpoints: ["/health", "/ws", "/assets/<key>"],
         },
         { status: 200 },
       );
@@ -668,7 +675,33 @@ function loadRuntimeConfig(env: Env): RuntimeConfig {
     rateLimitMaxMessages: envInt(env.RATE_LIMIT_MAX_MESSAGES, 60),
     maxMessageBytes: envInt(env.SIGNALING_MAX_MESSAGE_BYTES, 72_000),
     shardName: (env.SIGNALING_SHARD_NAME ?? "global").trim() || "global",
+    assetBasePath: normalizeAssetBasePath(env.ASSET_BASE_PATH ?? "operation-steelstorm"),
   };
+}
+
+async function serveAsset(request: Request, env: Env, config: RuntimeConfig): Promise<Response> {
+  const url = new URL(request.url);
+  const suffix = url.pathname.replace(/^\/assets\/+/, "");
+  if (suffix === "") {
+    return new Response("not_found", { status: 404 });
+  }
+
+  const key = joinAssetKey(config.assetBasePath, suffix);
+  const object = await env.ASSET_BUCKET.get(key);
+  if (object === null) {
+    return new Response("not_found", { status: 404 });
+  }
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  headers.set("cache-control", "public, max-age=31536000, immutable");
+  headers.set("access-control-allow-origin", "*");
+  headers.set("cross-origin-resource-policy", "cross-origin");
+  if (key.endsWith(".wasm")) {
+    headers.set("content-type", "application/wasm");
+  }
+  return new Response(object.body, { headers });
 }
 
 function envInt(raw: string | undefined, fallback: number): number {
@@ -692,6 +725,15 @@ function parseCommaList(raw: string): string[] {
     .split(",")
     .map((value) => value.trim())
     .filter((value) => value !== "");
+}
+
+function normalizeAssetBasePath(raw: string): string {
+  return raw.trim().replace(/^\/+|\/+$/g, "");
+}
+
+function joinAssetKey(basePath: string, suffix: string): string {
+  const trimmedSuffix = suffix.replace(/^\/+/, "");
+  return basePath === "" ? trimmedSuffix : `${basePath}/${trimmedSuffix}`;
 }
 
 function isOriginAllowed(origin: string, allowedOrigins: string[], allowLanOrigins: boolean): boolean {

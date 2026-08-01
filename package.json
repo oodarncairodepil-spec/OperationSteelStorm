@@ -4,8 +4,10 @@
   "version": "0.4.0",
   "scripts": {
     "cf:pages:build": "bash ./scripts/cloudflare-pages-build.sh",
+    "cf:r2:wasm:upload": "bash ./scripts/cloudflare-r2-upload-wasm.sh",
     "cf:worker:deploy": "npm --prefix ./cloudflare/signaling-worker run deploy",
     "cf:worker:dev": "npm --prefix ./cloudflare/signaling-worker run dev",
-    "cf:worker:typecheck": "npm --prefix ./cloudflare/signaling-worker run typecheck"
+    "cf:worker:typecheck": "npm --prefix ./cloudflare/signaling-worker run typecheck",
+    "vercel:build": "bash ./scripts/vercel-build.sh"
   }
 }

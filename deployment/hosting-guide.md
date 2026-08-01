@@ -4,7 +4,8 @@
 
 Export Godot Web into `game/web/`, then host as static files on any of:
 
-- Cloudflare Pages
+- Vercel
+- Cloudflare Pages (with R2/public offload for oversized `.wasm`)
 - GitHub Pages
 - Netlify
 - nginx / Caddy / any static host
@@ -16,8 +17,8 @@ Requirements:
 - Do not rely on a single vendor
 
 Point `network_config.json` signaling URL to your `wss://` service.
-For Vercel builds, set environment variable `SIGNALING_URL=wss://your-signaling-host.example` so the build injects the correct production signaling endpoint.
-For Cloudflare Pages, use build command `npm run cf:pages:build`, output `game/web`, and set Pages env `SIGNALING_URL=wss://your-worker-host/ws`.
+For Vercel builds, set environment variable `SIGNALING_URL=wss://your-signaling-host.example` so the build injects the correct production signaling endpoint. Legacy `SIGNALLING_URL` is also accepted for compatibility.
+For Cloudflare Pages, first upload `operation-steelstorm.wasm` to R2/public storage, then build with `WASM_PUBLIC_URL=https://your-public-wasm-host/operation-steelstorm.wasm npm run cf:pages:build` so Pages only serves the smaller remaining assets.
 For Render, use the root `render.yaml` Blueprint and set the static site's `SIGNALING_URL` env the same way.
 
 ## Signaling server

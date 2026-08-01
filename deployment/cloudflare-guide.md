@@ -2,14 +2,41 @@
 
 ## Recommended setup
 
-Use **two Cloudflare projects from the same GitHub repository**:
+Use **Vercel for the static game client** and **Cloudflare Worker** for signaling:
 
-1. **Cloudflare Pages** for the exported Godot web client
+1. **Vercel** for the exported Godot web client
 2. **Cloudflare Worker** for signaling, backed by a **Durable Object** with the **WebSocket Hibernation API**
+
+This is the default recommended production path because the exported
+`operation-steelstorm.wasm` currently exceeds the Cloudflare Pages per-file limit.
+
+## Optional Cloudflare-only setup
+
+If you want both frontend and signaling on Cloudflare:
+
+1. Upload `game/web/operation-steelstorm.wasm` to **R2** and expose it through a public bucket or custom domain
+2. Build the remaining Pages assets with:
+
+```bash
+WASM_PUBLIC_URL=https://<your-public-r2-host>/operation-steelstorm/operation-steelstorm.wasm \
+npm run cf:pages:build
+```
+
+3. Deploy the rewritten `game/web` directory to **Cloudflare Pages**
+
+If your Cloudflare account does not yet have a zone/custom domain attached,
+you can still complete the setup by serving the R2-backed `.wasm` through the
+existing signaling Worker asset route:
+
+```text
+WASM_PUBLIC_URL=https://operation-steelstorm-signaling.<your-subdomain>.workers.dev/assets/operation-steelstorm.wasm
+```
 
 This repository now supports that split directly:
 
 - `scripts/cloudflare-pages-build.sh` builds the Godot web export into `game/web`
+- `scripts/offload-web-wasm.sh` rewrites the loader to fetch `.wasm` from a public URL and removes the oversized local file
+- `scripts/cloudflare-r2-upload-wasm.sh` uploads the generated `.wasm` to R2
 - `cloudflare/signaling-worker/` contains the signaling Worker and Durable Object
 
 ## Why the old deploy failed
@@ -28,16 +55,38 @@ was being executed from the repository root. That fails for the static client be
 For Pages, you should **build static files** and let Pages publish `game/web`.
 For signaling, you should deploy the **separate Worker** in `cloudflare/signaling-worker/`.
 
-## Cloudflare Pages settings
+## Why Pages still needs R2 here
+
+Cloudflare Pages has a hard **25 MiB** per-file asset limit, while this export's
+`operation-steelstorm.wasm` is currently larger. Uploading the `.wasm` to R2 and
+rewriting the exported loader solves that without changing gameplay code.
+
+## Vercel settings
+
+Set the frontend project to build from the repository root with:
+
+- Build command: `bash ./scripts/vercel-build.sh`
+- Output directory: `game/web`
+- Environment variable: `SIGNALING_URL=wss://<your-worker-subdomain>/ws`
+
+Legacy typo compatibility:
+
+```text
+SIGNALLING_URL=wss://<your-worker-subdomain>/ws
+```
+
+is also accepted by the build script, but prefer `SIGNALING_URL` going forward.
+
+## Cloudflare Pages settings (optional frontend)
 
 Create a **Pages** project for this repository and set:
 
 - Framework preset: `None`
-- Build command: `npm run cf:pages:build`
+- Build command: `WASM_PUBLIC_URL=https://<your-public-r2-host>/operation-steelstorm/operation-steelstorm.wasm npm run cf:pages:build`
 - Build output directory: `game/web`
 - Root directory: `/`
 
-Set this environment variable on Pages:
+Set this environment variable on Pages if you want the built client to use the Worker:
 
 ```text
 SIGNALING_URL=wss://<your-worker-subdomain>/ws
@@ -49,7 +98,11 @@ Example:
 SIGNALING_URL=wss://operation-steelstorm-signaling.<subdomain>.workers.dev/ws
 ```
 
-If you use the included GitHub Actions workflow instead of Cloudflare-managed builds, this value should be stored in the GitHub repository secret `CLOUDFLARE_SIGNALING_URL` instead of a Pages build variable.
+If you use Cloudflare-managed builds, also set:
+
+```text
+WASM_PUBLIC_URL=https://<your-public-r2-host>/operation-steelstorm/operation-steelstorm.wasm
+```
 
 ## Worker deploy
 
@@ -91,15 +144,12 @@ Required GitHub repository secrets:
 ```text
 CLOUDFLARE_API_TOKEN=<api token with Workers/Pages edit access>
 CLOUDFLARE_ACCOUNT_ID=<your account id>
-CLOUDFLARE_PAGES_PROJECT_NAME=operation-steelstorm-game
-CLOUDFLARE_SIGNALING_URL=wss://<your-worker-subdomain>.workers.dev/ws
 ```
 
 The workflow:
 
 - deploys the signaling Worker from `cloudflare/signaling-worker`
-- builds the Godot web export
-- uploads `game/web` to the configured Pages project
+- does not attempt a Cloudflare Pages upload for the oversized frontend build
 
 ## Worker architecture
 
@@ -115,8 +165,32 @@ The current implementation uses a single named coordinator Durable Object shard 
 
 1. Deploy the signaling Worker first
 2. Copy its public Worker URL
+3. If using Vercel, set:
+   - `SIGNALING_URL=wss://.../ws`
+4. If using Cloudflare-only frontend:
+   - upload `operation-steelstorm.wasm` to R2
+   - set `WASM_PUBLIC_URL=https://.../operation-steelstorm.wasm`
+   - set `SIGNALING_URL=wss://.../ws`
+   - deploy the rewritten Pages output
+5. Copy the frontend URL
+6. Set Worker env:
+   - `ALLOWED_ORIGINS=https://your-frontend-host.example`
+
+For Pages specifically, that means:
+
+- `ALLOWED_ORIGINS=https://<your-pages-project>.pages.dev`
+
+For Vercel specifically, that means:
+
+- `ALLOWED_ORIGINS=https://<your-vercel-project>.vercel.app`
+
+Legacy deploy order retained for Pages:
+
+1. Deploy the signaling Worker first
+2. Copy its public Worker URL
 3. Set Pages env:
    - `SIGNALING_URL=wss://.../ws`
+   - `WASM_PUBLIC_URL=https://.../operation-steelstorm.wasm`
 4. Deploy the Pages project
 5. Copy the Pages URL
 6. Set Worker env:
@@ -139,7 +213,8 @@ Expected response:
 
 ## Notes
 
-- Pages hosts the static Godot build only
+- Vercel is the recommended static host for the current build size
+- Pages requires R2/public offload for the `.wasm`
 - the Worker hosts the signaling WebSocket only
 - do not use `npx wrangler deploy` from the repo root for the Pages project
 - the game client should point to the Worker `wss://.../ws` endpoint, not the Pages host

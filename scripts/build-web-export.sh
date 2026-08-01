@@ -6,8 +6,9 @@ GAME="$ROOT/game"
 OUT="$GAME/web"
 GODOT_VERSION="${GODOT_VERSION:-4.5-stable}"
 GODOT_HOME="${GODOT_HOME:-$HOME/godot}"
-TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.5.stable"
+TEMPLATE_DIR="${GODOT_TEMPLATE_DIR:-$HOME/.local/share/godot/export_templates/4.5.stable}"
 NETWORK_OVERRIDE="$GAME/multiplayer/network_config.local.json"
+SIGNALING_OVERRIDE_URL="${SIGNALING_URL:-${SIGNALLING_URL:-}}"
 
 mkdir -p "$GODOT_HOME" "$TEMPLATE_DIR" "$OUT"
 
@@ -40,12 +41,15 @@ if [[ ! -f "$TEMPLATE_DIR/web_release.zip" && ! -f "$TEMPLATE_DIR/web_nothreads_
   fi
 fi
 
-if [[ -n "${SIGNALING_URL:-}" ]]; then
+if [[ -n "${SIGNALING_OVERRIDE_URL}" ]]; then
   echo "Writing production signaling override..."
+  if [[ -z "${SIGNALING_URL:-}" && -n "${SIGNALLING_URL:-}" ]]; then
+    echo "Using legacy SIGNALLING_URL override; prefer SIGNALING_URL going forward."
+  fi
   cat > "$NETWORK_OVERRIDE" <<EOF
 {
   "signaling": {
-    "url": "${SIGNALING_URL}"
+    "url": "${SIGNALING_OVERRIDE_URL}"
   }
 }
 EOF

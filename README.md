@@ -95,21 +95,23 @@ npm run deploy
 Export preset: **Web** → `game/web/operation-steelstorm.html`  
 Requires Godot export templates for the matching engine version. See [docs/web-export-guide.md](docs/web-export-guide.md).
 
-Cloudflare Pages deploy:
-
-- Build command: `npm run cf:pages:build`
-- Build output directory: `game/web`
-- Pages env: `SIGNALING_URL=wss://your-worker-host/ws`
-- signaling backend: deploy `cloudflare/signaling-worker/` as a separate Worker
-- details: [deployment/cloudflare-guide.md](deployment/cloudflare-guide.md)
-
 Vercel deploy:
 
 - `vercel.json` builds the Godot Web export during deployment
 - `/` rewrites to `/operation-steelstorm.html`
 - output directory is `game/web`
 - set Vercel env `SIGNALING_URL=wss://your-signaling-host.example`
-- deploy the `signaling-server/` separately; Vercel only hosts the static game client here
+- legacy typo `SIGNALLING_URL` is also accepted during build for compatibility
+- recommended backend for hosted multiplayer: `cloudflare/signaling-worker/`
+- Vercel only hosts the static game client here
+
+Cloudflare Pages deploy:
+
+- Cloudflare Pages cannot serve this build directly while `operation-steelstorm.wasm` exceeds the 25 MiB per-file limit
+- optional Cloudflare-only fallback: upload the `.wasm` to R2/public storage, then run `WASM_PUBLIC_URL=https://<your-r2-public-host>/operation-steelstorm/operation-steelstorm.wasm npm run cf:pages:build`
+- if you do not yet have a Cloudflare zone/custom domain for R2, you can point `WASM_PUBLIC_URL` at the signaling Worker's `/assets/operation-steelstorm.wasm` route instead
+- after the offload rewrite, publish the remaining `game/web` output to Pages
+- details: [deployment/cloudflare-guide.md](deployment/cloudflare-guide.md)
 
 Render deploy:
 

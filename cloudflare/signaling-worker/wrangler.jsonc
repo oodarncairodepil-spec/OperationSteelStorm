@@ -8,6 +8,7 @@
   },
   "vars": {
     "HOST": "0.0.0.0",
+    "ALLOWED_ORIGINS": "https://steelslugsolid.vercel.app,https://operation-steelstorm-game.pages.dev",
     "MAX_PLAYERS_PER_ROOM": "2",
     "ROOM_CODE_LENGTH": "6",
     "PLAYER_NAME_MAX_LENGTH": "16",
@@ -16,8 +17,15 @@
     "RATE_LIMIT_MAX_MESSAGES": "60",
     "ALLOW_LAN_ORIGINS": "false",
     "SIGNALING_MAX_MESSAGE_BYTES": "72000",
-    "SIGNALING_SHARD_NAME": "global"
+    "SIGNALING_SHARD_NAME": "global",
+    "ASSET_BASE_PATH": "operation-steelstorm"
   },
+  "r2_buckets": [
+    {
+      "binding": "ASSET_BUCKET",
+      "bucket_name": "operation-steelstorm-web-assets"
+    }
+  ],
   "durable_objects": {
     "bindings": [
       {
