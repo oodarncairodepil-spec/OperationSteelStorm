@@ -19,7 +19,7 @@ script = ExtResource("1_player")
 
 [node name="Visual" type="Sprite2D" parent="."]
 position = Vector2(0, -2)
-scale = Vector2(0.32, 0.32)
+scale = Vector2(0.24, 0.24)
 texture = ExtResource("5_sprite")
 texture_filter = 1
 

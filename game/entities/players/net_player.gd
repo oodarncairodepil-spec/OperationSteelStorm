@@ -11,6 +11,7 @@ const GRAVITY := 900.0
 const MAX_HEALTH := 3
 const INVULN_SEC := 1.0
 const AIM_HELPER := preload("res://scripts/aim_helper.gd")
+const PLAYER_VISUALS := preload("res://entities/players/player_visuals.gd")
 
 signal downed_changed(downed: bool)
 
@@ -39,6 +40,7 @@ var _vehicle: Node2D
 var _visual_base_scale: Vector2
 var _muzzle_base_position: Vector2
 var _muzzle_up_base_position: Vector2
+var _walk_anim_time: float = 0.0
 
 
 func _ready() -> void:
@@ -73,6 +75,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if is_multiplayer_authority():
 		_process_local(delta)
+	else:
+		_update_visual_animation(delta, velocity)
 
 
 func _process_local(delta: float) -> void:
@@ -106,6 +110,7 @@ func _process_local(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 
 	move_and_slide()
+	_update_visual_animation(delta, velocity)
 
 	var shoot := Input.is_action_pressed("shoot")
 	if shoot:
@@ -298,6 +303,7 @@ func _refresh_label() -> void:
 
 
 func _refresh_visual() -> void:
+	_update_visual_animation(0.0, velocity)
 	if _downed:
 		_visual.modulate = Color(0.35, 0.35, 0.4, 1.0)
 		return
@@ -318,3 +324,12 @@ func _update_muzzle_positions() -> void:
 	var side := signf(facing if facing != 0.0 else 1.0)
 	_muzzle.position = Vector2(absf(_muzzle_base_position.x) * side, _muzzle_base_position.y)
 	_muzzle_up.position = Vector2(absf(_muzzle_up_base_position.x) * side, _muzzle_up_base_position.y)
+
+
+func _update_visual_animation(delta: float, current_velocity: Vector2) -> void:
+	var walking := _vehicle == null and not _downed and absf(current_velocity.x) > 8.0 and absf(current_velocity.y) < 120.0
+	if walking:
+		_walk_anim_time += delta
+	else:
+		_walk_anim_time = 0.0
+	_visual.texture = PLAYER_VISUALS.texture_for_walk_cycle(_walk_anim_time, walking)

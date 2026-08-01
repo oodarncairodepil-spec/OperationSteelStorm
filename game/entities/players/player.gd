@@ -15,6 +15,7 @@ signal score_pickup_requested
 
 const TEAM := &"player"
 const AIM_HELPER := preload("res://scripts/aim_helper.gd")
+const PLAYER_VISUALS := preload("res://entities/players/player_visuals.gd")
 
 @export var config: PlayerConfig
 
@@ -41,6 +42,7 @@ var _crouch_hurt: RectangleShape2D
 var _visual_base_scale: Vector2
 var _muzzle_base_position: Vector2
 var _muzzle_up_base_position: Vector2
+var _walk_anim_time: float = 0.0
 
 
 func _ready() -> void:
@@ -104,6 +106,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = config.jump_velocity
 
 	move_and_slide()
+	_update_visual_animation(delta, axis)
 
 	if Input.is_action_pressed("shoot"):
 		_try_shoot()
@@ -204,6 +207,7 @@ func _on_died() -> void:
 func _refresh_visual() -> void:
 	if _health.is_dead:
 		return
+	_update_visual_animation(0.0, velocity.x)
 	if _health.is_invulnerable:
 		_visual.modulate = Color(0.72, 0.92, 1.0, 0.82)
 	else:
@@ -219,3 +223,12 @@ func _update_muzzle_positions() -> void:
 	var side := signf(facing if facing != 0.0 else 1.0)
 	_muzzle.position = Vector2(absf(_muzzle_base_position.x) * side, _muzzle_base_position.y)
 	_muzzle_up.position = Vector2(absf(_muzzle_up_base_position.x) * side, _muzzle_up_base_position.y)
+
+
+func _update_visual_animation(delta: float, move_axis: float) -> void:
+	var walking := _vehicle == null and not _health.is_dead and not is_crouching and is_on_floor() and absf(move_axis) > 0.05
+	if walking:
+		_walk_anim_time += delta
+	else:
+		_walk_anim_time = 0.0
+	_visual.texture = PLAYER_VISUALS.texture_for_walk_cycle(_walk_anim_time, walking)

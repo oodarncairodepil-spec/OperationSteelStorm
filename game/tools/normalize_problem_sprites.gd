@@ -5,9 +5,37 @@ const ROOT := "res://assets/sprites/"
 const JOBS := [
 	{
 		"path": "players/player_rook_idle_02.png",
-		"size": Vector2i(96, 96),
+		"size": Vector2i(128, 128),
 		"bottom_margin": 4,
-		"side_margin": 6,
+		"side_margin": 10,
+		"top_margin": 4,
+	},
+	{
+		"path": "players/player_rook_walk_01.png",
+		"size": Vector2i(128, 128),
+		"bottom_margin": 4,
+		"side_margin": 10,
+		"top_margin": 4,
+	},
+	{
+		"path": "players/player_rook_walk_02.png",
+		"size": Vector2i(128, 128),
+		"bottom_margin": 4,
+		"side_margin": 10,
+		"top_margin": 4,
+	},
+	{
+		"path": "players/player_rook_walk_03.png",
+		"size": Vector2i(128, 128),
+		"bottom_margin": 4,
+		"side_margin": 10,
+		"top_margin": 4,
+	},
+	{
+		"path": "players/player_rook_walk_04.png",
+		"size": Vector2i(128, 128),
+		"bottom_margin": 4,
+		"side_margin": 10,
 		"top_margin": 4,
 	},
 	{
