@@ -38,6 +38,7 @@ var _fire_pressed_prev: bool = false
 var _applying_auth_health: bool = false
 var _vehicle: Node2D
 var _visual_base_scale: Vector2
+var _visual_rest_position: Vector2
 var _muzzle_base_position: Vector2
 var _muzzle_up_base_position: Vector2
 var _walk_anim_time: float = 0.0
@@ -58,6 +59,7 @@ func _ready() -> void:
 	_label.text = display_name
 	_combat = get_tree().get_first_node_in_group("host_combat_session") as HostCombatSession
 	_visual_base_scale = _visual.scale
+	_visual_rest_position = _visual.position
 	_muzzle_base_position = _muzzle.position
 	_muzzle_up_base_position = _muzzle_up.position
 	if is_multiplayer_authority():
@@ -332,4 +334,5 @@ func _update_visual_animation(delta: float, current_velocity: Vector2) -> void:
 		_walk_anim_time += delta
 	else:
 		_walk_anim_time = 0.0
-	_visual.texture = PLAYER_VISUALS.texture_for_walk_cycle(_walk_anim_time, walking)
+	var aim_dir := _aim_vector if is_multiplayer_authority() else Vector2(facing, -1.0 if is_aiming_up else 0.0)
+	PLAYER_VISUALS.apply_walk_pose(_visual, _walk_anim_time, walking, _visual_rest_position, aim_dir, false, is_aiming_up)

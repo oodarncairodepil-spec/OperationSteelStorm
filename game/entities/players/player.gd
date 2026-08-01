@@ -40,9 +40,13 @@ var _crouch_shape: RectangleShape2D
 var _standing_hurt: RectangleShape2D
 var _crouch_hurt: RectangleShape2D
 var _visual_base_scale: Vector2
+var _visual_stand_position: Vector2
+var _visual_crouch_position: Vector2 = Vector2.ZERO
 var _muzzle_base_position: Vector2
 var _muzzle_up_base_position: Vector2
 var _walk_anim_time: float = 0.0
+var _aim_preview: Vector2 = Vector2.RIGHT
+var _shoot_pose_time: float = 0.0
 
 
 func _ready() -> void:
@@ -65,6 +69,7 @@ func _ready() -> void:
 		_weapon.set_weapon(config.default_weapon)
 	_label.text = "ROOK"
 	_visual_base_scale = _visual.scale
+	_visual_stand_position = _visual.position
 	_muzzle_base_position = _muzzle.position
 	_muzzle_up_base_position = _muzzle_up.position
 	_set_visual_facing(facing)
@@ -93,6 +98,9 @@ func _physics_process(delta: float) -> void:
 	_apply_pose()
 
 	var axis := Input.get_axis("move_left", "move_right")
+	var both := Input.is_action_pressed("move_left") and Input.is_action_pressed("move_right")
+	var arc_modifier := Input.is_action_pressed("grenade")
+	_aim_preview = AIM_HELPER.get_player_arc_aim(axis, facing, is_aiming_up, both, arc_modifier)
 	var speed := config.move_speed
 	if is_crouching:
 		speed *= config.crouch_speed_factor
@@ -106,6 +114,8 @@ func _physics_process(delta: float) -> void:
 		velocity.y = config.jump_velocity
 
 	move_and_slide()
+	if _shoot_pose_time > 0.0:
+		_shoot_pose_time = maxf(0.0, _shoot_pose_time - delta)
 	_update_visual_animation(delta, axis)
 
 	if Input.is_action_pressed("shoot"):
@@ -154,6 +164,8 @@ func _try_shoot() -> void:
 	var both := Input.is_action_pressed("move_left") and Input.is_action_pressed("move_right")
 	var arc_modifier := Input.is_action_pressed("grenade")
 	var aim := AIM_HELPER.get_player_arc_aim(axis, facing, is_aiming_up, both, arc_modifier)
+	_aim_preview = aim
+	_shoot_pose_time = 0.14
 	var muzzle := _muzzle
 	if aim.y < -0.2:
 		muzzle = _muzzle_up
@@ -184,13 +196,13 @@ func _apply_pose() -> void:
 		_hurtbox_shape.shape = _crouch_hurt
 		_collision.position.y = 5.0
 		_hurtbox_shape.position.y = 5.0
-		_visual.position = Vector2(0, 0)
 	else:
 		_collision.shape = _standing_shape
 		_hurtbox_shape.shape = _standing_hurt
 		_collision.position.y = 0.0
 		_hurtbox_shape.position.y = 0.0
-		_visual.position = Vector2(0, -2)
+	if _visual_crouch_position == Vector2.ZERO:
+		_visual_crouch_position = _visual_stand_position + Vector2(0.0, 10.0)
 
 
 func _on_health_changed(current_health: int, max_health: int) -> void:
@@ -231,4 +243,6 @@ func _update_visual_animation(delta: float, move_axis: float) -> void:
 		_walk_anim_time += delta
 	else:
 		_walk_anim_time = 0.0
-	_visual.texture = PLAYER_VISUALS.texture_for_walk_cycle(_walk_anim_time, walking)
+	var base_position := _visual_crouch_position if is_crouching else _visual_stand_position
+	var aiming := (is_aiming_up and not is_crouching) or _shoot_pose_time > 0.0
+	PLAYER_VISUALS.apply_walk_pose(_visual, _walk_anim_time, walking, base_position, _aim_preview, is_crouching, aiming)
