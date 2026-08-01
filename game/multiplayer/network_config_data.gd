@@ -4,6 +4,7 @@ extends RefCounted
 
 var signaling_url: String = "ws://127.0.0.1:8787"
 var signaling_timeout_ms: int = 15000
+var signaling_config_error: String = ""
 var ice_servers: Array = []
 var webrtc_timeout_ms: int = 20000
 var snapshot_rate_hz: float = 20.0
@@ -58,15 +59,19 @@ func _apply_dict(root: Dictionary) -> void:
 
 func _apply_runtime_overrides() -> void:
 	if OS.has_feature("web"):
-		signaling_url = _resolve_web_signaling_url(signaling_url)
+		var page_host := _js_value_as_string("window.location.hostname")
+		if page_host == "":
+			return
+		if _is_explicit_remote_signaling_url(signaling_url):
+			return
+		if _is_local_browser_host(page_host):
+			signaling_url = _resolve_web_signaling_url(signaling_url, page_host)
+			return
+		signaling_url = ""
+		signaling_config_error = "Signaling server not configured. Set SIGNALING_URL to your deployed WSS endpoint."
 
 
-static func _resolve_web_signaling_url(configured_url: String) -> String:
-	if _is_explicit_remote_signaling_url(configured_url):
-		return configured_url
-	var page_host := _js_value_as_string("window.location.hostname")
-	if page_host == "":
-		return configured_url
+static func _resolve_web_signaling_url(configured_url: String, page_host: String) -> String:
 	var page_protocol := _js_value_as_string("window.location.protocol")
 	var scheme := "wss" if page_protocol == "https:" else "ws"
 	var port := _port_from_url(configured_url, 8787)
@@ -93,6 +98,23 @@ static func _host_from_url(url: String) -> String:
 	if host_port.contains(":"):
 		return host_port.rsplit(":", true, 1)[0]
 	return host_port
+
+
+static func _is_local_browser_host(host: String) -> bool:
+	var normalized := host.strip_edges().to_lower()
+	if normalized == "" or normalized == "localhost" or normalized == "127.0.0.1" or normalized == "0.0.0.0" or normalized == "::1":
+		return true
+	if normalized.ends_with(".local"):
+		return true
+	if normalized.begins_with("10.") or normalized.begins_with("192.168."):
+		return true
+	if normalized.begins_with("172."):
+		var second := normalized.get_slice(".", 1)
+		if second.is_valid_int():
+			var octet := int(second)
+			if octet >= 16 and octet <= 31:
+				return true
+	return false
 
 
 static func _port_from_url(url: String, fallback: int) -> int:

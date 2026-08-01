@@ -1,0 +1,62 @@
+previews:
+  generation: automatic
+
+services:
+  - type: web
+    runtime: static
+    name: operation-steelstorm-game
+    plan: free
+    buildCommand: bash ./scripts/vercel-build.sh
+    staticPublishPath: game/web
+    pullRequestPreviewsEnabled: true
+    buildFilter:
+      paths:
+        - game/**
+        - scripts/vercel-build.sh
+        - render.yaml
+    envVars:
+      - key: SIGNALING_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /
+        destination: /operation-steelstorm.html
+    headers:
+      - path: /operation-steelstorm.wasm
+        name: Content-Type
+        value: application/wasm
+
+  - type: web
+    runtime: node
+    name: operation-steelstorm-signaling
+    plan: free
+    rootDir: signaling-server
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /health
+    pullRequestPreviewsEnabled: true
+    buildFilter:
+      paths:
+        - signaling-server/**
+        - render.yaml
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: MAX_PLAYERS_PER_ROOM
+        value: "2"
+      - key: ROOM_CODE_LENGTH
+        value: "6"
+      - key: PLAYER_NAME_MAX_LENGTH
+        value: "16"
+      - key: ROOM_IDLE_TTL_MS
+        value: "1800000"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "10000"
+      - key: RATE_LIMIT_MAX_MESSAGES
+        value: "60"
+      - key: LOG_LEVEL
+        value: info

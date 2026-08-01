@@ -72,6 +72,12 @@ func connect_signaling() -> void:
 	if _socket != null and _socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		return
 	config = NetworkConfigData.load_from_disk()
+	if config.signaling_config_error != "":
+		_fail(config.signaling_config_error)
+		return
+	if config.signaling_url == "":
+		_fail("Signaling server not configured.")
+		return
 	_socket = WebSocketPeer.new()
 	var err := _socket.connect_to_url(config.signaling_url)
 	if err != OK:
@@ -130,6 +136,7 @@ func rpc_start_match() -> void:
 func get_debug_text() -> String:
 	var lines: PackedStringArray = [
 		"signaling: %s" % signaling_state,
+		"signaling_url: %s" % (config.signaling_url if config != null and config.signaling_url != "" else "-"),
 		"webrtc: %s" % webrtc_state,
 		"room: %s" % (room_code if room_code != "" else "-"),
 		"name: %s" % (player_name if player_name != "" else "-"),
@@ -140,6 +147,8 @@ func get_debug_text() -> String:
 		"peers_lobby: %d" % lobby_players.size(),
 		"error: %s" % (last_error if last_error != "" else "-"),
 	]
+	if config != null and config.signaling_config_error != "":
+		lines.append("config_error: %s" % config.signaling_config_error)
 	if multiplayer.multiplayer_peer != null and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		lines.append("mp_unique: %d" % multiplayer.get_unique_id())
 		lines.append("mp_peers: %s" % str(multiplayer.get_peers()))

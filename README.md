@@ -93,6 +93,16 @@ Vercel deploy:
 - set Vercel env `SIGNALING_URL=wss://your-signaling-host.example`
 - deploy the `signaling-server/` separately; Vercel only hosts the static game client here
 
+Render deploy:
+
+- use the root [`render.yaml`](render.yaml) Blueprint
+- create two services from this same repository:
+  - static site for the Godot client
+  - web service for `signaling-server/`
+- set Render env `SIGNALING_URL=wss://your-signaling-host.example`
+- set signaling env `ALLOWED_ORIGINS=https://your-game-host.example`
+- details: [deployment/render-guide.md](deployment/render-guide.md)
+
 LAN browser testing:
 
 ```bash
@@ -118,6 +128,7 @@ If the browser blocks the self-signed cert, run `bash ./scripts/trust-local-cert
 | [docs/testing-guide.md](docs/testing-guide.md) | Manual / automated test plans |
 | [docs/web-export-guide.md](docs/web-export-guide.md) | Browser export notes |
 | [deployment/hosting-guide.md](deployment/hosting-guide.md) | Static client + signaling deploy |
+| [deployment/render-guide.md](deployment/render-guide.md) | Ready-to-use Render two-service deploy |
 
 ## Intellectual property
 
