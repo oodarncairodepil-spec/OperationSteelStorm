@@ -219,6 +219,8 @@ func rpc_round_result(won: bool) -> void:
 
 @rpc("authority", "reliable")
 func rpc_reject(reason: String) -> void:
+	if reason == "cannot_fire":
+		return
 	push_warning("Host rejected request: %s" % reason)
 
 
@@ -247,7 +249,6 @@ func _host_handle_fire(peer_id: int, aim: Vector2, origin: Vector2, requested_we
 		return
 	var player := _find_player(peer_id)
 	if player == null or player.is_downed():
-		rpc_reject.rpc_id(peer_id, "cannot_fire")
 		return
 	var cd := float(_fire_cooldown_by_peer.get(peer_id, 0.0))
 	if cd > 0.0:

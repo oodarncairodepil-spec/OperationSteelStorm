@@ -8,12 +8,14 @@ set -a
 source ../.env
 set +a
 
-if [[ -z "${SPRITECOOK:-}" ]]; then
-  echo "SPRITECOOK env var missing"
+SPRITECOOK_API="${SPRITECOOKLAP:-${SPRITECOOK:-}}"
+
+if [[ -z "${SPRITECOOK_API}" ]]; then
+  echo "SpriteCook API key missing (expected SPRITECOOKLAP or SPRITECOOK)."
   exit 1
 fi
 
-credits_json="$(curl -sS https://api.spritecook.ai/v1/api/credits -H "Authorization: Bearer $SPRITECOOK")"
+credits_json="$(curl -sS https://api.spritecook.ai/v1/api/credits -H "Authorization: Bearer $SPRITECOOK_API")"
 remaining="$(node -e "const d=JSON.parse(process.argv[1]); console.log(d.credits_remaining ?? d.remaining ?? d.total ?? 0)" "$credits_json" || echo 0)"
 
 echo "credits_remaining=$remaining"
@@ -26,13 +28,13 @@ fi
 mkdir -p ../tmp/spritecook
 
 curl -sS https://api.spritecook.ai/v1/api/generate-sync \
-  -H "Authorization: Bearer $SPRITECOOK" \
+  -H "Authorization: Bearer $SPRITECOOK_API" \
   -H "Content-Type: application/json" \
   -d '{"prompt":"compact assault rover vehicle, side view, armored cab variant, chunky tires, mounted turret silhouette, stronger contrast, tropical island combat, original side-scrolling game vehicle sprite","width":192,"height":96,"variations":1,"pixel":true,"pixel_perfect":true,"bg_mode":"transparent","theme":"retro military science fiction","style":"detailed 2D pixel art, readable in a side-scrolling action game","aspect_ratio":"1:1","smart_crop":true,"mode":"assets","model":"gemini-3.1-flash-lite-image","resolution":"1K"}' \
   > ../tmp/spritecook/rover_v2.json
 
 curl -sS https://api.spritecook.ai/v1/api/generate-sync \
-  -H "Authorization: Bearer $SPRITECOOK" \
+  -H "Authorization: Bearer $SPRITECOOK_API" \
   -H "Content-Type: application/json" \
   -d '{"prompt":"giant siege walker boss, side view, heavier industrial plating, stronger silhouette separation, readable core reactor window, orange hazard accents, original side-scrolling boss sprite","width":192,"height":192,"variations":1,"pixel":true,"pixel_perfect":true,"bg_mode":"transparent","theme":"retro military science fiction","style":"detailed 2D pixel art, readable in a side-scrolling action game","aspect_ratio":"1:1","smart_crop":true,"mode":"assets","model":"gemini-3.1-flash-lite-image","resolution":"1K"}' \
   > ../tmp/spritecook/siege_walker_v2.json

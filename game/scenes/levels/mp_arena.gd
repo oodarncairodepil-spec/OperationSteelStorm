@@ -73,6 +73,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _spawn_existing_peers() -> void:
+	if not multiplayer.has_multiplayer_peer():
+		return
 	var ids: Array[int] = [multiplayer.get_unique_id()]
 	for peer_id in multiplayer.get_peers():
 		ids.append(int(peer_id))
@@ -111,6 +113,8 @@ func _name_for_peer(peer_id: int) -> String:
 
 
 func _focus_local_camera() -> void:
+	if not multiplayer.has_multiplayer_peer():
+		return
 	var local_id := multiplayer.get_unique_id()
 	var node := _players_root.get_node_or_null("Player_%d" % local_id)
 	if node is Node2D:

@@ -149,7 +149,7 @@ func get_debug_text() -> String:
 	]
 	if config != null and config.signaling_config_error != "":
 		lines.append("config_error: %s" % config.signaling_config_error)
-	if multiplayer.multiplayer_peer != null and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+	if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		lines.append("mp_unique: %d" % multiplayer.get_unique_id())
 		lines.append("mp_peers: %s" % str(multiplayer.get_peers()))
 	return "\n".join(lines)

@@ -115,7 +115,10 @@ func _spawn_existing_peers() -> void:
 	if _is_headless_smoke_mode():
 		_spawn_player(1)
 		return
-	var ids: Array[int] = [multiplayer.get_unique_id()]
+	var local_id := _local_peer_id()
+	if local_id <= 0:
+		return
+	var ids: Array[int] = [local_id]
 	for peer_id in multiplayer.get_peers():
 		ids.append(int(peer_id))
 	ids.sort()
@@ -307,7 +310,7 @@ func _broadcast_entity_snapshots() -> void:
 
 
 func _on_player_weapon_changed(peer_id: int, weapon_id: StringName) -> void:
-	if peer_id != multiplayer.get_unique_id():
+	if peer_id != _local_peer_id():
 		return
 	match weapon_id:
 		&"scatter_cannon":
@@ -421,7 +424,11 @@ func _is_headless_smoke_mode() -> bool:
 
 
 func _local_peer_id() -> int:
-	return 1 if _is_headless_smoke_mode() else multiplayer.get_unique_id()
+	if _is_headless_smoke_mode():
+		return 1
+	if not multiplayer.has_multiplayer_peer():
+		return 0
+	return multiplayer.get_unique_id()
 
 
 func _is_host_authority() -> bool:

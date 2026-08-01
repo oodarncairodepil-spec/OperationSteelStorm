@@ -57,6 +57,10 @@ func get_phase() -> int:
 	return _phase
 
 
+func get_health_component() -> HealthComponent:
+	return _health
+
+
 func is_fight_active() -> bool:
 	return _fight_active
 
