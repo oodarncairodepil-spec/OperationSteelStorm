@@ -12,6 +12,8 @@ game/multiplayer/network_config.local.json
 !**/.env.example
 
 # Node
+node_modules/
+.wrangler/
 signaling-server/node_modules/
 signaling-server/dist/
 npm-debug.log*

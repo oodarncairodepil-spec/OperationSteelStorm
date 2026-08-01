@@ -17,6 +17,7 @@ Requirements:
 
 Point `network_config.json` signaling URL to your `wss://` service.
 For Vercel builds, set environment variable `SIGNALING_URL=wss://your-signaling-host.example` so the build injects the correct production signaling endpoint.
+For Cloudflare Pages, use build command `npm run cf:pages:build`, output `game/web`, and set Pages env `SIGNALING_URL=wss://your-worker-host/ws`.
 For Render, use the root `render.yaml` Blueprint and set the static site's `SIGNALING_URL` env the same way.
 
 ## Signaling server
@@ -24,6 +25,7 @@ For Render, use the root `render.yaml` Blueprint and set the static site's `SIGN
 Deploy the Docker image from `signaling-server/` to a VPS, Railway-like, Render-like, Fly.io-like, or mini PC.
 Do not rely on the Vercel static deployment to host the signaling websocket service.
 If deploying on Render, set `ALLOWED_ORIGINS=https://your-static-site.onrender.com` and let Render terminate TLS for the public `wss://` endpoint.
+If deploying on Cloudflare, use the Worker in `cloudflare/signaling-worker/`, which uses Durable Objects + WebSocket Hibernation instead of the Node.js `ws` server.
 
 Use **WSS** behind a reverse proxy (Caddy/nginx/Traefik) with TLS.
 

@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "operation-steelstorm-signaling",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "HOST": "0.0.0.0",
+    "MAX_PLAYERS_PER_ROOM": "2",
+    "ROOM_CODE_LENGTH": "6",
+    "PLAYER_NAME_MAX_LENGTH": "16",
+    "ROOM_IDLE_TTL_MS": "1800000",
+    "RATE_LIMIT_WINDOW_MS": "10000",
+    "RATE_LIMIT_MAX_MESSAGES": "60",
+    "ALLOW_LAN_ORIGINS": "false",
+    "SIGNALING_MAX_MESSAGE_BYTES": "72000",
+    "SIGNALING_SHARD_NAME": "global"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SIGNALING_HUB",
+        "class_name": "SignalingHub"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["SignalingHub"]
+    }
+  ]
+}

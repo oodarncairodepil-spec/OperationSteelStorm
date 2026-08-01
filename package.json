@@ -1,0 +1,11 @@
+{
+  "name": "operation-steelstorm",
+  "private": true,
+  "version": "0.4.0",
+  "scripts": {
+    "cf:pages:build": "bash ./scripts/cloudflare-pages-build.sh",
+    "cf:worker:deploy": "npm --prefix ./cloudflare/signaling-worker run deploy",
+    "cf:worker:dev": "npm --prefix ./cloudflare/signaling-worker run dev",
+    "cf:worker:typecheck": "npm --prefix ./cloudflare/signaling-worker run typecheck"
+  }
+}

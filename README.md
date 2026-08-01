@@ -67,6 +67,8 @@ godot --path game --headless --script tests/phase1_smoke.gd
 
 ### Signaling server
 
+Local Node.js signaling:
+
 ```bash
 cd signaling-server
 cp .env.example .env
@@ -80,10 +82,26 @@ Health check: `http://127.0.0.1:8787/health`
 
 Multiplayer (two Godot windows): Main Menu → Multiplayer → Create/Join → Ready → Host Start Match.
 
+Cloudflare Worker signaling:
+
+```bash
+cd cloudflare/signaling-worker
+npm install
+npm run deploy
+```
+
 ### Web export
 
 Export preset: **Web** → `game/web/operation-steelstorm.html`  
 Requires Godot export templates for the matching engine version. See [docs/web-export-guide.md](docs/web-export-guide.md).
+
+Cloudflare Pages deploy:
+
+- Build command: `npm run cf:pages:build`
+- Build output directory: `game/web`
+- Pages env: `SIGNALING_URL=wss://your-worker-host/ws`
+- signaling backend: deploy `cloudflare/signaling-worker/` as a separate Worker
+- details: [deployment/cloudflare-guide.md](deployment/cloudflare-guide.md)
 
 Vercel deploy:
 
@@ -127,6 +145,7 @@ If the browser blocks the self-signed cert, run `bash ./scripts/trust-local-cert
 | [docs/phase-4-asset-ideation.md](docs/phase-4-asset-ideation.md) | SpriteCook-driven asset generation plan |
 | [docs/testing-guide.md](docs/testing-guide.md) | Manual / automated test plans |
 | [docs/web-export-guide.md](docs/web-export-guide.md) | Browser export notes |
+| [deployment/cloudflare-guide.md](deployment/cloudflare-guide.md) | Cloudflare Pages + Worker deployment |
 | [deployment/hosting-guide.md](deployment/hosting-guide.md) | Static client + signaling deploy |
 | [deployment/render-guide.md](deployment/render-guide.md) | Ready-to-use Render two-service deploy |
 
