@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "echo 'No root install step required'",
+  "buildCommand": "bash ./scripts/vercel-build.sh",
+  "outputDirectory": "game/web",
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/operation-steelstorm.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).wasm",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        }
+      ]
+    }
+  ]
+}

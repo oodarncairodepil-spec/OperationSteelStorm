@@ -85,6 +85,12 @@ Multiplayer (two Godot windows): Main Menu → Multiplayer → Create/Join → R
 Export preset: **Web** → `game/web/operation-steelstorm.html`  
 Requires Godot export templates for the matching engine version. See [docs/web-export-guide.md](docs/web-export-guide.md).
 
+Vercel deploy:
+
+- `vercel.json` builds the Godot Web export during deployment
+- `/` rewrites to `/operation-steelstorm.html`
+- output directory is `game/web`
+
 LAN browser testing:
 
 ```bash
