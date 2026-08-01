@@ -1,0 +1,30 @@
+# Godot
+game/.godot/
+game/android/
+game/web/*
+!game/web/.gitkeep
+
+# Local network secrets / overrides
+game/multiplayer/network_config.local.json
+.local-dev/
+**/.env
+**/.env.local
+!**/.env.example
+
+# Node
+signaling-server/node_modules/
+signaling-server/dist/
+npm-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+*.tmp
+
+# Export / build leftovers
+*.pck
+*.zip
+*.tpz

@@ -1,0 +1,3 @@
+# Placeholder for future local TURN overrides.
+# Copy to network_config.local.json (gitignored) and fill credentials.
+# Never commit production TURN usernames/passwords.

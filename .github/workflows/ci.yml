@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  signaling:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: signaling-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: signaling-server/package-lock.json
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  godot-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot
+            ~/.local/share/godot/export_templates
+          key: godot-4.5-stable-linux-web-templates
+
+      - name: Install Godot 4.5 stable
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/godot" "$HOME/.local/share/godot/export_templates"
+          curl -L -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip"
+          unzip -o /tmp/godot.zip -d "$HOME/godot"
+          GODOT_BIN="$(find "$HOME/godot" -type f -name 'Godot*' | head -n 1)"
+          chmod +x "$GODOT_BIN"
+          ln -sf "$GODOT_BIN" "$HOME/godot/godot"
+          curl -L -o /tmp/godot-templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_export_templates.tpz"
+          mkdir -p /tmp/templates
+          unzip -o /tmp/godot-templates.tpz -d /tmp/templates
+          # tpz contains templates/ folder contents for versioned dir
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.5.stable"
+          mkdir -p "$TEMPLATE_DIR"
+          if [ -d /tmp/templates/templates ]; then
+            cp -R /tmp/templates/templates/* "$TEMPLATE_DIR/"
+          else
+            cp -R /tmp/templates/* "$TEMPLATE_DIR/"
+          fi
+
+      - name: Project load / boot smoke check
+        run: |
+          set -euo pipefail
+          "$HOME/godot/godot" --path game --headless --quit-after 3
+
+      - name: Export Web
+        run: |
+          set -euo pipefail
+          mkdir -p game/web
+          "$HOME/godot/godot" --path game --headless --export-release "Web" "web/operation-steelstorm.html"
+
+      - name: Upload Web artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-export
+          path: game/web/
+          if-no-files-found: warn

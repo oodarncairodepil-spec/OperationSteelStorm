@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/weapons/weapon_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://entities/projectiles/heavy_pulse_projectile.tscn" id="2_proj"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"assault_rover_cannon"
+display_name = "Assault Rover Cannon"
+damage = 2
+fire_interval_sec = 0.18
+projectile_speed = 580.0
+projectile_lifetime_sec = 1.1
+unlimited_ammo = true
+max_ammo = 0
+pellet_count = 1
+spread_degrees = 1.0
+projectile_scene = ExtResource("2_proj")

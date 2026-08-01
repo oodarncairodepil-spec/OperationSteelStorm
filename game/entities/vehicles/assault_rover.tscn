@@ -1,0 +1,71 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://entities/vehicles/assault_rover.gd" id="1_rover"]
+[ext_resource type="Script" path="res://components/weapon_component.gd" id="2_weapon"]
+[ext_resource type="Script" path="res://components/health_component.gd" id="3_health"]
+[ext_resource type="Script" path="res://components/hurtbox_component.gd" id="4_hurt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/vehicles/veh_assault_rover_idle_01.png" id="5_sprite"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rover"]
+size = Vector2(34, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rover_hurt"]
+size = Vector2(36, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_board"]
+size = Vector2(72, 34)
+
+[node name="AssaultRover" type="CharacterBody2D"]
+script = ExtResource("1_rover")
+collision_layer = 256
+collision_mask = 1
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(0, -10)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("5_sprite")
+texture_filter = 1
+
+[node name="Label" type="Label" parent="."]
+offset_left = -30.0
+offset_top = -24.0
+offset_right = 30.0
+offset_bottom = -10.0
+theme_override_font_sizes/font_size = 8
+text = "ASSAULT ROVER"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_rover")
+
+[node name="WeaponComponent" type="Node" parent="."]
+script = ExtResource("2_weapon")
+muzzle_path = NodePath("../Muzzle")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 8
+invulnerability_duration_sec = 0.2
+
+[node name="HurtboxComponent" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 16
+script = ExtResource("4_hurt")
+health_path = NodePath("../HealthComponent")
+team = &"player"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("RectangleShape2D_rover_hurt")
+
+[node name="BoardArea" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoardArea"]
+shape = SubResource("RectangleShape2D_board")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(30, -10)
+
+[node name="ExitMarker" type="Marker2D" parent="."]
+position = Vector2(-18, 0)

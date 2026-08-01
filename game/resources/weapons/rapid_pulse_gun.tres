@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/weapons/weapon_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://entities/projectiles/projectile.tscn" id="2_proj"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"rapid_pulse_gun"
+display_name = "Rapid Pulse Gun"
+damage = 1
+fire_interval_sec = 0.11
+projectile_speed = 500.0
+projectile_lifetime_sec = 1.0
+unlimited_ammo = false
+max_ammo = 48
+pellet_count = 1
+spread_degrees = 3.0
+projectile_scene = ExtResource("2_proj")

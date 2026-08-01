@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3 uid="uid://mp_lobby"]
+
+[ext_resource type="Script" path="res://scenes/menus/mp_lobby.gd" id="1_lobby"]
+
+[node name="MpLobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.06, 0.11, 0.15, 1)
+
+[node name="Main" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+theme_override_constants/separation = 12
+
+[node name="Left" type="VBoxContainer" parent="Main"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="RoomLabel" type="Label" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Room ----"
+
+[node name="Hint" type="Label" parent="Main/Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Share the room code. WebRTC starts when both players are present."
+autowrap_mode = 2
+
+[node name="PlayersLabel" type="Label" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Players"
+
+[node name="StatusLabel" type="Label" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Status"
+
+[node name="ErrorLabel" type="Label" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.45, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
+
+[node name="ReadyButton" type="Button" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ready"
+
+[node name="StartButton" type="Button" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Start Match (Host)"
+
+[node name="LeaveButton" type="Button" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave"
+
+[node name="DebugPanel" type="PanelContainer" parent="Main"]
+layout_mode = 2
+custom_minimum_size = Vector2(230, 0)
+
+[node name="DebugBox" type="VBoxContainer" parent="Main/DebugPanel"]
+layout_mode = 2
+
+[node name="DebugTitle" type="Label" parent="Main/DebugPanel/DebugBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Connection Debug"
+
+[node name="DebugLabel" type="Label" parent="Main/DebugPanel/DebugBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "…"
+autowrap_mode = 3

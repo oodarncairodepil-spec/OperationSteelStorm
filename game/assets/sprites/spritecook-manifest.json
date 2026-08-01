@@ -1,0 +1,155 @@
+{
+  "version": 3,
+  "generated_at": "2026-08-01",
+  "notes": [
+    "Persist stable SpriteCook asset IDs here instead of temporary signed URLs.",
+    "These entries scaffold the Phase 4 vertical-slice asset pipeline.",
+    "Local export paths point to imported PNG files inside game/assets/sprites.",
+    "Current scene hookup uses player_rook_idle_02, enemy_shieldtrooper_idle_02, veh_assault_rover_idle_01, boss_siegewalker_body_idle_01, npc_civilian_idle_01, and ui_results_panel."
+  ],
+  "credits": {
+    "remaining_after_anchor_batch": 0,
+    "model_used": "gemini-3.1-flash-lite-image",
+    "resolution": "1K"
+  },
+  "anchors": {
+    "operative": {
+      "asset_id": "914641de-3ca9-41fc-a849-5e7d363e9ad1",
+      "status": "imported",
+      "target_family": "players",
+      "local_file": "game/assets/sprites/players/player_rook_idle_01.png",
+      "prompt": "playable commando operative, side view, tropical retro military sci-fi, olive tactical gear, expressive face, compact proportions, clean silhouette, idle pose, original game character sprite",
+      "dimensions": "96x96",
+      "source_dimensions": "66x66",
+      "active_variant_file": "game/assets/sprites/players/player_rook_idle_02.png"
+    },
+    "shield_trooper": {
+      "asset_id": "975a0268-cf87-4f12-b47e-2a527d2190a9",
+      "status": "imported",
+      "target_family": "enemies",
+      "local_file": "game/assets/sprites/enemies/enemy_shieldtrooper_idle_01.png",
+      "prompt": "enemy shield trooper robot, side view, dark mechanical armor, tropical-industrial military sci-fi, readable shield silhouette, aggressive stance, original side-scrolling game sprite",
+      "dimensions": "160x160",
+      "source_dimensions": "132x132",
+      "active_variant_file": "game/assets/sprites/enemies/enemy_shieldtrooper_idle_02.png"
+    },
+    "assault_rover": {
+      "asset_id": "9816dddb-b80b-4823-8e2d-f9c618cedd50",
+      "status": "imported",
+      "target_family": "vehicles",
+      "local_file": "game/assets/sprites/vehicles/veh_assault_rover_idle_01.png",
+      "prompt": "compact assault rover vehicle, side view, two-seat military sci-fi buggy, chunky tires, mounted turret silhouette, tropical island combat, original side-scrolling game vehicle sprite",
+      "dimensions": "192x96",
+      "source_dimensions": "128x64"
+    },
+    "drone": {
+      "asset_id": "9a907bcf-cfb2-4711-9603-958aa58d9d09",
+      "status": "imported",
+      "target_family": "enemies",
+      "local_file": "game/assets/sprites/enemies/enemy_drone_hover_01.png",
+      "prompt": "enemy drone unit, side view, compact hovering combat drone, dark industrial mechanical shell, glowing sensors, readable aerial silhouette, tropical military sci-fi, original side-scrolling game sprite",
+      "dimensions": "160x160",
+      "source_dimensions": "132x132"
+    },
+    "heavy_gunner": {
+      "asset_id": "81203302-985b-4377-af8f-db65665736b4",
+      "status": "imported",
+      "target_family": "enemies",
+      "local_file": "game/assets/sprites/enemies/enemy_heavygunner_idle_01.png",
+      "prompt": "heavy gunner enemy, side view, bulky mechanized infantry silhouette, oversized rotary weapon, dark industrial military sci-fi armor, readable anticipation pose, original side-scrolling game sprite",
+      "dimensions": "160x160",
+      "source_dimensions": "148x148"
+    },
+    "civilian": {
+      "asset_id": "7aaf60d4-2fdf-4cdb-8ca6-a4ce99d7248f",
+      "status": "imported",
+      "target_family": "world",
+      "local_file": "game/assets/sprites/world/npc_civilian_idle_01.png",
+      "prompt": "civilian worker hostage, side view, tropical industrial island setting, bright utilitarian clothing, anxious expression, readable non-combat silhouette, original side-scrolling game sprite",
+      "dimensions": "96x96",
+      "source_dimensions": "84x84"
+    },
+    "siege_walker": {
+      "asset_id": "189d0029-395d-49dd-9a5e-f66c87841895",
+      "status": "imported",
+      "target_family": "bosses",
+      "local_file": "game/assets/sprites/bosses/boss_siegewalker_body_idle_01.png",
+      "prompt": "giant siege walker boss, side view, heavy industrial military machine, multi-leg silhouette, readable cockpit and weapon pods, dark mechanical enemy faction, original side-scrolling boss sprite",
+      "dimensions": "192x192",
+      "source_dimensions": "160x160"
+    },
+    "ui_result_panel": {
+      "asset_id": "7c23b3e2-510f-4444-907e-cef1d714bb82",
+      "status": "imported",
+      "target_family": "ui",
+      "local_file": "game/assets/sprites/ui/ui_results_panel.png",
+      "prompt": "pixel art mission results panel, military sci-fi arcade ui, clean frame, tropical operation theme, readable score and objective badge layout, transparent background, original game user interface element",
+      "dimensions": "192x128",
+      "source_dimensions": "160x96"
+    }
+  },
+  "exports": {
+    "players": [
+      {
+        "name": "rook_idle_anchor",
+        "asset_id": "914641de-3ca9-41fc-a849-5e7d363e9ad1",
+        "file": "game/assets/sprites/players/player_rook_idle_01.png"
+      },
+      {
+        "name": "rook_idle_variant_02",
+        "asset_id": "b2dfb5b4-891e-4f4d-be5d-85c6882c91c7",
+        "file": "game/assets/sprites/players/player_rook_idle_02.png"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "shield_trooper_anchor",
+        "asset_id": "975a0268-cf87-4f12-b47e-2a527d2190a9",
+        "file": "game/assets/sprites/enemies/enemy_shieldtrooper_idle_01.png"
+      },
+      {
+        "name": "shield_trooper_variant_02",
+        "asset_id": "8d20171d-256f-4ec7-a846-4eca3a41015f",
+        "file": "game/assets/sprites/enemies/enemy_shieldtrooper_idle_02.png"
+      },
+      {
+        "name": "drone_anchor",
+        "asset_id": "9a907bcf-cfb2-4711-9603-958aa58d9d09",
+        "file": "game/assets/sprites/enemies/enemy_drone_hover_01.png"
+      },
+      {
+        "name": "heavy_gunner_anchor",
+        "asset_id": "81203302-985b-4377-af8f-db65665736b4",
+        "file": "game/assets/sprites/enemies/enemy_heavygunner_idle_01.png"
+      }
+    ],
+    "vehicles": [
+      {
+        "name": "assault_rover_anchor",
+        "asset_id": "9816dddb-b80b-4823-8e2d-f9c618cedd50",
+        "file": "game/assets/sprites/vehicles/veh_assault_rover_idle_01.png"
+      }
+    ],
+    "bosses": [
+      {
+        "name": "siege_walker_anchor",
+        "asset_id": "189d0029-395d-49dd-9a5e-f66c87841895",
+        "file": "game/assets/sprites/bosses/boss_siegewalker_body_idle_01.png"
+      }
+    ],
+    "ui": [
+      {
+        "name": "results_panel_anchor",
+        "asset_id": "7c23b3e2-510f-4444-907e-cef1d714bb82",
+        "file": "game/assets/sprites/ui/ui_results_panel.png"
+      }
+    ],
+    "world": [
+      {
+        "name": "civilian_anchor",
+        "asset_id": "7aaf60d4-2fdf-4cdb-8ca6-a4ce99d7248f",
+        "file": "game/assets/sprites/world/npc_civilian_idle_01.png"
+      }
+    ]
+  }
+}

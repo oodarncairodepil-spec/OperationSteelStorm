@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemies/enemy_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://entities/projectiles/projectile.tscn" id="2_proj"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"patrol_trooper"
+display_name = "Patrol Trooper"
+max_health = 3
+move_speed = 55.0
+detection_range = 170.0
+attack_range = 150.0
+attack_damage = 1
+attack_interval_sec = 1.0
+score_reward = 100
+projectile_speed = 240.0
+projectile_scene = ExtResource("2_proj")

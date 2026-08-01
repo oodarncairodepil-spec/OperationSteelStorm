@@ -1,0 +1,28 @@
+{
+  "signaling": {
+    "url": "ws://127.0.0.1:8787",
+    "connection_timeout_ms": 15000,
+    "reconnect_attempts": 2
+  },
+  "webrtc": {
+    "ice_servers": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302",
+          "stun:stun1.l.google.com:19302"
+        ]
+      }
+    ],
+    "comment_turn": "Add TURN credentials via environment injection or a non-committed local override. Never commit production TURN secrets.",
+    "connection_timeout_ms": 20000
+  },
+  "snapshots": {
+    "send_rate_hz": 20
+  },
+  "lobby": {
+    "max_players": 2,
+    "planned_max_players": 4,
+    "room_code_length": 6,
+    "player_name_max_length": 16
+  }
+}

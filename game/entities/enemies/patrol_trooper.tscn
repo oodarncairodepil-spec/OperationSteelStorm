@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=3 uid="uid://patrol_trooper"]
+
+[ext_resource type="Script" path="res://entities/enemies/patrol_trooper.gd" id="1_enemy"]
+[ext_resource type="Script" path="res://components/health_component.gd" id="2_health"]
+[ext_resource type="Script" path="res://components/hurtbox_component.gd" id="3_hurt"]
+[ext_resource type="Script" path="res://components/state_machine.gd" id="4_state"]
+[ext_resource type="Script" path="res://multiplayer/network_interpolation_component.gd" id="5_interp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_shieldtrooper_idle_02.png" id="6_sprite"]
+
+[sub_resource type="RectangleShape2D" id="Shape_body"]
+size = Vector2(16, 28)
+
+[sub_resource type="RectangleShape2D" id="Shape_hurt"]
+size = Vector2(16, 28)
+
+[node name="PatrolTrooper" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_enemy")
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(0, -20)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("6_sprite")
+texture_filter = 1
+
+[node name="Label" type="Label" parent="."]
+offset_left = -24.0
+offset_top = -28.0
+offset_right = 24.0
+offset_bottom = -14.0
+theme_override_font_sizes/font_size = 8
+text = "PATROL"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape_body")
+
+[node name="HurtboxComponent" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("3_hurt")
+health_path = NodePath("../HealthComponent")
+team = &"enemy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("Shape_hurt")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_health")
+max_health = 3
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4_state")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(-12, -2)
+
+[node name="NetworkInterpolationComponent" type="Node" parent="."]
+script = ExtResource("5_interp")

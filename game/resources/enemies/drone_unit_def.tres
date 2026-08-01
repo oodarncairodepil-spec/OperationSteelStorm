@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemies/enemy_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://entities/projectiles/projectile.tscn" id="2_proj"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"drone_unit"
+display_name = "Drone"
+max_health = 2
+move_speed = 70.0
+detection_range = 260.0
+attack_range = 240.0
+attack_damage = 1
+attack_interval_sec = 0.85
+score_reward = 120
+projectile_speed = 320.0
+projectile_lifetime_sec = 1.8
+tint = Color(0.58, 0.85, 1, 1)
+hover_amplitude = 18.0
+hover_speed = 2.8
+hover_height_offset = -44.0
+standoff_distance = 150.0
+aim_height_offset = -2.0
+projectile_scene = ExtResource("2_proj")

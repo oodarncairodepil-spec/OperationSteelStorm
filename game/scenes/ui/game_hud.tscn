@@ -1,0 +1,139 @@
+[gd_scene load_steps=3 format=3 uid="uid://game_hud"]
+
+[ext_resource type="Script" path="res://scenes/ui/game_hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ui_results_panel.png" id="2_results"]
+
+[node name="GameHUD" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopBar" type="HBoxContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = -8.0
+offset_bottom = 28.0
+theme_override_constants/separation = 12
+
+[node name="HealthLabel" type="Label" parent="Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "HP 3/3"
+
+[node name="WeaponLabel" type="Label" parent="Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "WPN -"
+
+[node name="AmmoLabel" type="Label" parent="Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "AMMO ∞"
+
+[node name="ScoreLabel" type="Label" parent="Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "SCORE 0"
+
+[node name="ObjectiveLabel" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 30.0
+offset_right = 160.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 11
+text = "Clear all patrol troopers"
+horizontal_alignment = 1
+
+[node name="BannerLabel" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -60.0
+offset_right = 140.0
+offset_bottom = -40.0
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ResultPanel" type="Control" parent="Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -90.0
+offset_right = 140.0
+offset_bottom = 90.0
+
+[node name="ResultArt" type="TextureRect" parent="Root/ResultPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_results")
+expand_mode = 1
+stretch_mode = 5
+texture_filter = 1
+
+[node name="VBox" type="VBoxContainer" parent="Root/ResultPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="ResultLabel" type="Label" parent="Root/ResultPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.75)
+theme_override_constants/outline_size = 3
+text = "ROOM CLEARED"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="Root/ResultPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Restart Room"
+
+[node name="MenuButton" type="Button" parent="Root/ResultPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Main Menu"
