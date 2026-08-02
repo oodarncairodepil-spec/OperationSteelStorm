@@ -32,6 +32,7 @@ type ClientMessage =
   | { type: "join_room"; roomCode: string; playerName: string }
   | { type: "leave_room" }
   | { type: "set_ready"; ready: boolean }
+  | { type: "set_room_scene"; sceneId: "phase4_beachhead" | "phase4_scene_1_2" }
   | { type: "webrtc_offer"; targetPeerId: string; sdp: string }
   | { type: "webrtc_answer"; targetPeerId: string; sdp: string }
   | {
@@ -52,17 +53,19 @@ interface LobbyPlayer {
 
 type ServerMessage =
   | { type: "welcome"; peerId: string }
-  | { type: "room_created"; roomCode: string; peerId: string; isHost: true }
+  | { type: "room_created"; roomCode: string; peerId: string; isHost: true; sceneId: string }
   | {
       type: "room_joined";
       roomCode: string;
       peerId: string;
       isHost: boolean;
+      sceneId: string;
       players: LobbyPlayer[];
     }
   | { type: "player_joined"; player: LobbyPlayer }
   | { type: "player_left"; peerId: string; reason: string }
   | { type: "player_ready"; peerId: string; ready: boolean }
+  | { type: "room_scene_changed"; sceneId: string }
   | { type: "host_changed"; peerId: string }
   | { type: "webrtc_offer"; fromPeerId: string; sdp: string }
   | { type: "webrtc_answer"; fromPeerId: string; sdp: string }
@@ -91,6 +94,7 @@ interface RoomPlayerState {
 interface RoomState {
   code: string;
   hostPeerId: string;
+  sceneId: string;
   players: Record<string, RoomPlayerState>;
   updatedAt: number;
 }
@@ -167,6 +171,9 @@ export class SignalingHub extends DurableObject<Env> {
       const storedRooms = await this.ctx.storage.get<Record<string, RoomState>>(ROOM_STORAGE_KEY);
       if (storedRooms) {
         for (const room of Object.values(storedRooms)) {
+          if (typeof room.sceneId !== "string") {
+            room.sceneId = "phase4_beachhead";
+          }
           this.rooms.set(room.code, room);
         }
       }
@@ -255,6 +262,9 @@ export class SignalingHub extends DurableObject<Env> {
       case "set_ready":
         await this.onSetReady(ws, session, msg.ready);
         return;
+      case "set_room_scene":
+        await this.onSetRoomScene(ws, session, msg.sceneId);
+        return;
       case "webrtc_offer":
       case "webrtc_answer":
       case "webrtc_ice":
@@ -311,6 +321,7 @@ export class SignalingHub extends DurableObject<Env> {
     const room: RoomState = {
       code,
       hostPeerId: session.peerId,
+      sceneId: "phase4_beachhead",
       players: {
         [session.peerId]: {
           peerId: session.peerId,
@@ -331,6 +342,7 @@ export class SignalingHub extends DurableObject<Env> {
       roomCode: code,
       peerId: session.peerId,
       isHost: true,
+      sceneId: room.sceneId,
     });
   }
 
@@ -381,6 +393,7 @@ export class SignalingHub extends DurableObject<Env> {
       roomCode: room.code,
       peerId: session.peerId,
       isHost: room.hostPeerId === session.peerId,
+      sceneId: room.sceneId,
       players,
     });
     this.broadcast(
@@ -431,6 +444,33 @@ export class SignalingHub extends DurableObject<Env> {
       type: "player_ready",
       peerId: session.peerId,
       ready,
+    });
+  }
+
+  private async onSetRoomScene(
+    ws: WebSocket,
+    session: SessionAttachment,
+    sceneId: "phase4_beachhead" | "phase4_scene_1_2",
+  ): Promise<void> {
+    if (session.roomCode === null) {
+      this.sendError(ws, "not_in_room", "Not in a room.");
+      return;
+    }
+    const room = this.rooms.get(session.roomCode);
+    if (!room || !room.players[session.peerId]) {
+      this.sendError(ws, "not_in_room", "Not in a room.");
+      return;
+    }
+    if (room.hostPeerId !== session.peerId) {
+      this.sendError(ws, "forbidden", "Only the host can change the room mission.");
+      return;
+    }
+    room.sceneId = sceneId === "phase4_scene_1_2" ? "phase4_scene_1_2" : "phase4_beachhead";
+    room.updatedAt = Date.now();
+    await this.persistRooms();
+    this.broadcast(room.code, {
+      type: "room_scene_changed",
+      sceneId: room.sceneId,
     });
   }
 
@@ -819,6 +859,11 @@ function parseClientMessage(text: string):
     case "set_ready":
       if (typeof value.ready === "boolean") {
         return { ok: true, message: { type: "set_ready", ready: value.ready } };
+      }
+      break;
+    case "set_room_scene":
+      if (value.sceneId === "phase4_beachhead" || value.sceneId === "phase4_scene_1_2") {
+        return { ok: true, message: { type: "set_room_scene", sceneId: value.sceneId } };
       }
       break;
     case "webrtc_offer":

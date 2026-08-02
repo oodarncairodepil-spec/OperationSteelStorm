@@ -16,6 +16,123 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="TouchControls" type="Control" parent="Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="LeftPad" type="Control" parent="Root/TouchControls"]
+layout_mode = 1
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -148.0
+offset_right = 148.0
+offset_bottom = -12.0
+
+[node name="LeftButton" type="TouchScreenButton" parent="Root/TouchControls/LeftPad"]
+unique_name_in_owner = true
+position = Vector2(26, 66)
+modulate = Color(1, 1, 1, 0.28)
+action = "move_left"
+
+[node name="LeftShape" type="RectangleShape2D" parent="Root/TouchControls/LeftPad/LeftButton"]
+size = Vector2(52, 52)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/LeftPad/LeftButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../LeftShape")
+
+[node name="RightButton" type="TouchScreenButton" parent="Root/TouchControls/LeftPad"]
+unique_name_in_owner = true
+position = Vector2(104, 66)
+modulate = Color(1, 1, 1, 0.28)
+action = "move_right"
+
+[node name="RightShape" type="RectangleShape2D" parent="Root/TouchControls/LeftPad/RightButton"]
+size = Vector2(52, 52)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/LeftPad/RightButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../RightShape")
+
+[node name="UpButton" type="TouchScreenButton" parent="Root/TouchControls/LeftPad"]
+unique_name_in_owner = true
+position = Vector2(65, 25)
+modulate = Color(1, 1, 1, 0.24)
+action = "aim_up"
+
+[node name="UpShape" type="RectangleShape2D" parent="Root/TouchControls/LeftPad/UpButton"]
+size = Vector2(46, 46)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/LeftPad/UpButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../UpShape")
+
+[node name="DownButton" type="TouchScreenButton" parent="Root/TouchControls/LeftPad"]
+unique_name_in_owner = true
+position = Vector2(65, 108)
+modulate = Color(1, 1, 1, 0.24)
+action = "move_down"
+
+[node name="DownShape" type="RectangleShape2D" parent="Root/TouchControls/LeftPad/DownButton"]
+size = Vector2(46, 46)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/LeftPad/DownButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../DownShape")
+
+[node name="RightActions" type="Control" parent="Root/TouchControls"]
+layout_mode = 1
+anchors_preset = 9
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -188.0
+offset_right = -12.0
+offset_bottom = -12.0
+
+[node name="JumpButton" type="TouchScreenButton" parent="Root/TouchControls/RightActions"]
+unique_name_in_owner = true
+position = Vector2(110, 30)
+modulate = Color(1, 1, 1, 0.3)
+action = "jump"
+
+[node name="JumpShape" type="RectangleShape2D" parent="Root/TouchControls/RightActions/JumpButton"]
+size = Vector2(58, 58)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/RightActions/JumpButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../JumpShape")
+
+[node name="SquatButton" type="TouchScreenButton" parent="Root/TouchControls/RightActions"]
+unique_name_in_owner = true
+position = Vector2(46, 92)
+modulate = Color(1, 1, 1, 0.24)
+action = "move_down"
+
+[node name="SquatShape" type="RectangleShape2D" parent="Root/TouchControls/RightActions/SquatButton"]
+size = Vector2(54, 54)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/RightActions/SquatButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../SquatShape")
+
+[node name="ShootButton" type="TouchScreenButton" parent="Root/TouchControls/RightActions"]
+unique_name_in_owner = true
+position = Vector2(116, 118)
+modulate = Color(1, 1, 1, 0.34)
+action = "shoot"
+
+[node name="ShootShape" type="RectangleShape2D" parent="Root/TouchControls/RightActions/ShootButton"]
+size = Vector2(70, 70)
+
+[node name="Shape" type="Shape2D" parent="Root/TouchControls/RightActions/ShootButton" node_paths=PackedStringArray("shape")]
+shape = NodePath("../ShootShape")
+
 [node name="TopBar" type="HBoxContainer" parent="Root"]
 layout_mode = 1
 anchors_preset = 10

@@ -1,0 +1,94 @@
+{
+  "group_id": "d567f7f4-4445-4c19-bec0-78943f54214e",
+  "states": [
+    {
+      "character": {
+        "id": "675c5338-22eb-4205-bbce-6764f12887d6",
+        "name": "Idle",
+        "prompt": "Male soldier like on metal slug. With weapon, army boot, and backpack. Platformer Set. side-view characters",
+        "size": {
+          "width": 120,
+          "height": 120
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-08-01T13:15:50.024011+00:00"
+      },
+      "folder": "Idle",
+      "frames": {
+        "rotations": {
+          "south": "Idle/rotations/south.png",
+          "south-east": "Idle/rotations/south-east.png",
+          "east": "Idle/rotations/east.png",
+          "north-east": "Idle/rotations/north-east.png",
+          "north": "Idle/rotations/north.png",
+          "north-west": "Idle/rotations/north-west.png",
+          "west": "Idle/rotations/west.png",
+          "south-west": "Idle/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "80fd8a0d-cb7d-4a20-ab67-b8ec33198b9c",
+        "name": "walking",
+        "prompt": "Male soldier like on metal slug. With weapon, army boot, and backpack. Platformer Set. side-view characters",
+        "size": {
+          "width": 120,
+          "height": 120
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-08-01T13:21:13.638417+00:00"
+      },
+      "folder": "walking",
+      "frames": {
+        "rotations": {
+          "south": "walking/rotations/south.png",
+          "south-east": "walking/rotations/south-east.png",
+          "east": "walking/rotations/east.png",
+          "north-east": "walking/rotations/north-east.png",
+          "north": "walking/rotations/north.png",
+          "north-west": "walking/rotations/north-west.png",
+          "west": "walking/rotations/west.png",
+          "south-west": "walking/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "8f5aef9d-5076-4b1a-9f91-bdfe9e0e6663",
+        "name": "shooting",
+        "prompt": "Male soldier like on metal slug. With weapon, army boot, and backpack. Platformer Set. side-view characters",
+        "size": {
+          "width": 120,
+          "height": 120
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-08-01T13:23:55.765420+00:00"
+      },
+      "folder": "shooting",
+      "frames": {
+        "rotations": {
+          "south": "shooting/rotations/south.png",
+          "south-east": "shooting/rotations/south-east.png",
+          "east": "shooting/rotations/east.png",
+          "north-east": "shooting/rotations/north-east.png",
+          "north": "shooting/rotations/north.png",
+          "north-west": "shooting/rotations/north-west.png",
+          "west": "shooting/rotations/west.png",
+          "south-west": "shooting/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-08-01T13:26:40.333673"
+}

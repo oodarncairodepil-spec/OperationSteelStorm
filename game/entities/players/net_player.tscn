@@ -54,7 +54,7 @@ invulnerability_duration_sec = 1.0
 script = ExtResource("2_interp")
 
 [node name="Muzzle" type="Marker2D" parent="."]
-position = Vector2(10, -22)
+position = Vector2(10, -12)
 
 [node name="AimUpMuzzle" type="Marker2D" parent="."]
-position = Vector2(4, -33)
+position = Vector2(4, -24)

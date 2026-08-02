@@ -43,7 +43,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "Phase 4 — Vertical Slice + Co-op Mission"
+text = "Phase 4 — Mission Select + Co-op Mission Select"
 horizontal_alignment = 1
 
 [node name="VersionLabel" type="Label" parent="Center"]
@@ -57,13 +57,25 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-text = "Single Player — Phase 4 Mission"
+text = "Single Player — Mission Select"
 
 [node name="MultiplayerButton" type="Button" parent="Center"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-text = "Multiplayer — Phase 4 Co-op"
+text = "Multiplayer — Room + Mission Select"
+
+[node name="ResolutionOption" type="OptionButton" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="InstallButton" type="Button" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Install App Shortcut"
+visible = false
 
 [node name="QuitButton" type="Button" parent="Center"]
 unique_name_in_owner = true

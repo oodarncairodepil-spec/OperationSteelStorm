@@ -18,6 +18,10 @@ export const ClientMessageSchema = z.discriminatedUnion("type", [
     ready: z.boolean(),
   }),
   z.object({
+    type: z.literal("set_room_scene"),
+    sceneId: z.enum(["phase4_beachhead", "phase4_scene_1_2"]),
+  }),
+  z.object({
     type: z.literal("webrtc_offer"),
     targetPeerId: z.string().min(1).max(64),
     sdp: z.string().min(1).max(64_000),
@@ -43,17 +47,19 @@ export type ClientMessage = z.infer<typeof ClientMessageSchema>;
 
 export type ServerMessage =
   | { type: "welcome"; peerId: string }
-  | { type: "room_created"; roomCode: string; peerId: string; isHost: true }
+  | { type: "room_created"; roomCode: string; peerId: string; isHost: true; sceneId: string }
   | {
       type: "room_joined";
       roomCode: string;
       peerId: string;
       isHost: boolean;
+      sceneId: string;
       players: LobbyPlayer[];
     }
   | { type: "player_joined"; player: LobbyPlayer }
   | { type: "player_left"; peerId: string; reason: string }
   | { type: "player_ready"; peerId: string; ready: boolean }
+  | { type: "room_scene_changed"; sceneId: string }
   | { type: "host_changed"; peerId: string }
   | { type: "webrtc_offer"; fromPeerId: string; sdp: string }
   | { type: "webrtc_answer"; fromPeerId: string; sdp: string }

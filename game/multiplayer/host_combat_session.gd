@@ -346,6 +346,10 @@ func _finish(won: bool) -> void:
 	if _finished:
 		return
 	_finished = true
+	call_deferred("_finish_deferred", won)
+
+
+func _finish_deferred(won: bool) -> void:
 	rpc_round_result.rpc(won)
 
 

@@ -30,5 +30,7 @@ func _on_body_entered(body: Node) -> void:
 		return
 	weapon.set_weapon(weapon_definition)
 	_consumed = true
+	monitoring = false
+	monitorable = false
 	collected.emit(weapon_definition.id)
-	queue_free()
+	call_deferred("queue_free")

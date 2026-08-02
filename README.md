@@ -95,6 +95,33 @@ npm run deploy
 Export preset: **Web** → `game/web/operation-steelstorm.html`  
 Requires Godot export templates for the matching engine version. See [docs/web-export-guide.md](docs/web-export-guide.md).
 
+Run locally in browser:
+
+```bash
+./scripts/serve-web.sh
+```
+
+Then open one of these URLs:
+
+- `http://localhost:8080/operation-steelstorm.html`
+- `http://127.0.0.1:8080/operation-steelstorm.html`
+
+LAN / mobile browser testing:
+
+```bash
+HTTPS=1 ./scripts/serve-web.sh
+```
+
+Then open:
+
+- `https://<your-lan-ip>:8080/operation-steelstorm.html`
+
+Notes:
+
+- `localhost` is the preferred local URL when testing the current web build.
+- If you change exported files, re-export the Godot Web preset to refresh `game/web/`.
+- For multiplayer, start the signaling backend separately before opening the browser client.
+
 Vercel deploy:
 
 - `vercel.json` builds the Godot Web export during deployment

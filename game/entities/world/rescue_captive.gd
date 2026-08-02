@@ -13,11 +13,13 @@ var _nearby_player: Node2D
 var _rescued: bool = false
 var safe_position: Vector2 = Vector2.ZERO
 var _evacuated: bool = false
+var _ground_y: float = 0.0
 
 
 func _ready() -> void:
 	collision_layer = 128
 	collision_mask = 2
+	_ground_y = global_position.y
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_update_visual()
@@ -32,7 +34,7 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("interact"):
 		_rescued = true
 		if safe_position == Vector2.ZERO:
-			safe_position = global_position + Vector2(150.0, -18.0)
+			safe_position = global_position + Vector2(-150.0, 0.0)
 		_update_visual()
 		rescued.emit()
 
@@ -56,6 +58,8 @@ func force_rescue(target_safe_position: Vector2) -> void:
 
 func apply_network_snapshot(pos: Vector2, rescued_state: bool, evacuated_state: bool) -> void:
 	global_position = pos
+	if not _rescued:
+		_ground_y = pos.y
 	_rescued = rescued_state
 	_evacuated = evacuated_state
 	_update_visual()
@@ -92,9 +96,13 @@ func _update_visual() -> void:
 func _tick_escape(delta: float) -> void:
 	if _evacuated:
 		return
-	var target := safe_position if safe_position != Vector2.ZERO else global_position + Vector2(150.0, -18.0)
-	global_position = global_position.move_toward(target, run_speed * delta)
-	if global_position.distance_to(target) <= 2.0:
+	var target := safe_position if safe_position != Vector2.ZERO else Vector2(global_position.x - 150.0, _ground_y)
+	var next_position := global_position
+	next_position.x = move_toward(next_position.x, target.x, run_speed * delta)
+	next_position.y = move_toward(next_position.y, _ground_y, run_speed * delta)
+	global_position = next_position
+	if absf(global_position.x - target.x) <= 2.0 and absf(global_position.y - _ground_y) <= 2.0:
+		global_position = Vector2(target.x, _ground_y)
 		_evacuated = true
 		monitoring = false
 		monitorable = false

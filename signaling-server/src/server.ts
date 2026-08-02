@@ -169,6 +169,9 @@ export class SignalingServer {
       case "set_ready":
         this.onSetReady(peer, message.ready);
         break;
+      case "set_room_scene":
+        this.onSetRoomScene(peer, message.sceneId);
+        break;
       case "webrtc_offer":
       case "webrtc_answer":
       case "webrtc_ice":
@@ -195,6 +198,7 @@ export class SignalingServer {
       roomCode: room.code,
       peerId: peer.id,
       isHost: true,
+      sceneId: room.sceneId,
     });
   }
 
@@ -227,6 +231,7 @@ export class SignalingServer {
       roomCode: room.code,
       peerId: peer.id,
       isHost: peer.id === room.hostPeerId,
+      sceneId: room.sceneId,
       players,
     });
 
@@ -251,6 +256,22 @@ export class SignalingServer {
       return;
     }
     this.broadcast(room.code, { type: "player_ready", peerId: peer.id, ready });
+  }
+
+  private onSetRoomScene(peer: PeerState, sceneId: string): void {
+    const result = this.roomStore.setScene(peer.id, sceneId);
+    if (!result.ok) {
+      this.send(peer.socket, {
+        type: "error",
+        code: result.reason,
+        message: result.reason === "forbidden" ? "Only the host can change the room mission." : "Not in a room.",
+      });
+      return;
+    }
+    this.broadcast(result.room.code, {
+      type: "room_scene_changed",
+      sceneId: result.room.sceneId,
+    });
   }
 
   private relaySignal(

@@ -3,6 +3,8 @@ extends Control
 
 @onready var _room_label: Label = %RoomLabel
 @onready var _players_label: Label = %PlayersLabel
+@onready var _mission_option: OptionButton = %MissionOption
+@onready var _mission_label: Label = %MissionLabel
 @onready var _ready_button: Button = %ReadyButton
 @onready var _start_button: Button = %StartButton
 @onready var _leave_button: Button = %LeaveButton
@@ -11,9 +13,16 @@ extends Control
 @onready var _error_label: Label = %ErrorLabel
 
 var _local_ready: bool = false
+var _updating_mission_option: bool = false
 
 
 func _ready() -> void:
+	_mission_option.clear()
+	_mission_option.add_item("Mission 1-1: Beachhead")
+	_mission_option.set_item_metadata(0, "phase4_beachhead")
+	_mission_option.add_item("Mission 1-2: High Rescue")
+	_mission_option.set_item_metadata(1, "phase4_scene_1_2")
+	_mission_option.item_selected.connect(_on_mission_selected)
 	_ready_button.pressed.connect(_on_ready_pressed)
 	_start_button.pressed.connect(_on_start_pressed)
 	_leave_button.pressed.connect(_on_leave_pressed)
@@ -45,6 +54,10 @@ func _refresh() -> void:
 		var ready := "READY" if bool(p.get("ready", false)) else "…"
 		lines.append("[%s] %s — %s" % [mark, str(p.get("name", "?")), ready])
 	_players_label.text = "\n".join(lines) if not lines.is_empty() else "Waiting for players…"
+	_mission_label.text = "Selected mission: %s" % NetworkManager.get_selected_room_scene_label()
+	_mission_option.visible = NetworkManager.is_host
+	_mission_option.disabled = not NetworkManager.is_host
+	_sync_mission_option()
 	_status_label.text = "Signaling: %s | WebRTC: %s" % [NetworkManager.signaling_state, NetworkManager.webrtc_state]
 	_start_button.visible = NetworkManager.is_host
 	_start_button.disabled = not NetworkManager.can_start_match()
@@ -69,3 +82,19 @@ func _on_leave_pressed() -> void:
 
 func _on_fail(message: String) -> void:
 	_error_label.text = message
+
+
+func _on_mission_selected(index: int) -> void:
+	if _updating_mission_option:
+		return
+	var scene_id := str(_mission_option.get_item_metadata(index))
+	NetworkManager.set_room_scene(scene_id)
+
+
+func _sync_mission_option() -> void:
+	_updating_mission_option = true
+	for index in range(_mission_option.item_count):
+		if str(_mission_option.get_item_metadata(index)) == NetworkManager.selected_room_scene_id:
+			_mission_option.select(index)
+			break
+	_updating_mission_option = false

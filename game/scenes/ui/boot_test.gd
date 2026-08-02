@@ -33,9 +33,10 @@ func _build_info_text() -> String:
 		"Platform: %s" % platform,
 		"Renderer: Compatibility (GL Compatibility)",
 		"Internal resolution: %dx%d" % [
-			ProjectSettings.get_setting("display/window/size/viewport_width"),
-			ProjectSettings.get_setting("display/window/size/viewport_height"),
+			AppSettings.get_resolution_size().x,
+			AppSettings.get_resolution_size().y,
 		],
+		"Resolution preset: %s" % AppSettings.get_resolution_label(),
 		"Phase: 4 — Vertical slice mission",
 	]
 	return "\n".join(lines)

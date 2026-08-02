@@ -55,7 +55,7 @@ func _ready() -> void:
 	collision_mask = 1
 	_hurtbox.team = TEAM
 	_hurtbox.collision_layer = 2
-	_hurtbox.collision_mask = 16
+	_hurtbox.collision_mask = 0
 	_health.died.connect(_on_died)
 	_health.health_changed.connect(_on_health_changed)
 	_health.invulnerability_finished.connect(_refresh_visual)
@@ -70,6 +70,8 @@ func _ready() -> void:
 	_label.text = "ROOK"
 	_visual_base_scale = _visual.scale
 	_visual_stand_position = _visual.position
+	if absf(_visual_base_scale.x) < 0.01 or absf(_visual_base_scale.y) < 0.01:
+		_visual_base_scale = Vector2(0.24, 0.24)
 	_muzzle_base_position = _muzzle.position
 	_muzzle_up_base_position = _muzzle_up.position
 	_set_visual_facing(facing)
@@ -136,6 +138,17 @@ func add_score(amount: int) -> void:
 
 func is_in_vehicle() -> bool:
 	return _vehicle != null
+
+
+func revive_full(spawn_position: Vector2 = global_position) -> void:
+	if _vehicle != null and _vehicle.has_method("force_disembark"):
+		_vehicle.call("force_disembark")
+	global_position = spawn_position
+	velocity = Vector2.ZERO
+	_health.reset_full()
+	_health.start_invulnerability(1.0)
+	_label.text = "ROOK"
+	_refresh_visual()
 
 
 func enter_vehicle(vehicle: Node2D) -> void:
@@ -245,4 +258,5 @@ func _update_visual_animation(delta: float, move_axis: float) -> void:
 		_walk_anim_time = 0.0
 	var base_position := _visual_crouch_position if is_crouching else _visual_stand_position
 	var aiming := (is_aiming_up and not is_crouching) or _shoot_pose_time > 0.0
-	PLAYER_VISUALS.apply_walk_pose(_visual, _walk_anim_time, walking, base_position, _aim_preview, is_crouching, aiming)
+	var base_scale := Vector2(absf(_visual_base_scale.x) * signf(facing if facing != 0.0 else 1.0), _visual_base_scale.y)
+	PLAYER_VISUALS.apply_walk_pose(_visual, _walk_anim_time, walking, base_position, base_scale, _aim_preview, is_crouching, aiming)

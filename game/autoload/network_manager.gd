@@ -29,6 +29,7 @@ var godot_peer_id: int = 0
 var lobby_players: Array[Dictionary] = []
 var remote_signaling_id: String = ""
 var webrtc_connected: bool = false
+var selected_room_scene_id: String = "phase4_beachhead"
 
 var _socket: WebSocketPeer
 var _rtc: WebRTCMultiplayerPeer
@@ -61,6 +62,7 @@ func reset_session() -> void:
 	lobby_players.clear()
 	remote_signaling_id = ""
 	webrtc_connected = false
+	selected_room_scene_id = "phase4_beachhead"
 	last_error = ""
 	_set_signaling_state("disconnected")
 	_set_webrtc_state("idle")
@@ -120,6 +122,15 @@ func can_start_match() -> bool:
 	return is_host and webrtc_connected and lobby_players.size() >= 2 and _all_ready()
 
 
+func set_room_scene(scene_id: String) -> void:
+	var normalized := _normalize_scene_id(scene_id)
+	selected_room_scene_id = normalized
+	if room_code == "" or not is_host:
+		lobby_updated.emit()
+		return
+	_send_signal({"type": "set_room_scene", "sceneId": normalized})
+
+
 func start_match() -> void:
 	if not can_start_match():
 		_fail("Cannot start match yet (need WebRTC + all ready).")
@@ -130,7 +141,11 @@ func start_match() -> void:
 @rpc("authority", "call_local", "reliable")
 func rpc_start_match() -> void:
 	_log("match_start")
-	SceneManager.go_to_mp_phase4_mission()
+	match selected_room_scene_id:
+		"phase4_scene_1_2":
+			SceneManager.go_to_mp_phase4_scene_1_2()
+		_:
+			SceneManager.go_to_mp_phase4_mission()
 
 
 func get_debug_text() -> String:
@@ -201,6 +216,7 @@ func _on_signal_packet(text: String) -> void:
 			room_code = str(msg.get("roomCode", ""))
 			is_host = true
 			godot_peer_id = GODOT_HOST_ID
+			selected_room_scene_id = _normalize_scene_id(str(msg.get("sceneId", "phase4_beachhead")))
 			lobby_players = [{
 				"peerId": signaling_peer_id,
 				"name": player_name,
@@ -213,6 +229,7 @@ func _on_signal_packet(text: String) -> void:
 			room_code = str(msg.get("roomCode", ""))
 			is_host = bool(msg.get("isHost", false))
 			godot_peer_id = GODOT_HOST_ID if is_host else GODOT_CLIENT_ID
+			selected_room_scene_id = _normalize_scene_id(str(msg.get("sceneId", "phase4_beachhead")))
 			lobby_players.clear()
 			var players: Variant = msg.get("players", [])
 			if players is Array:
@@ -247,6 +264,9 @@ func _on_signal_packet(text: String) -> void:
 					lobby_players[i]["ready"] = ready
 			lobby_updated.emit()
 			match_ready_changed.emit(can_start_match())
+		"room_scene_changed":
+			selected_room_scene_id = _normalize_scene_id(str(msg.get("sceneId", "phase4_beachhead")))
+			lobby_updated.emit()
 		"host_changed":
 			var new_host := str(msg.get("peerId", ""))
 			is_host = new_host == signaling_peer_id
@@ -278,6 +298,14 @@ func _flush_pending_action() -> void:
 	_pending_action = ""
 
 
+func get_selected_room_scene_label() -> String:
+	match selected_room_scene_id:
+		"phase4_scene_1_2":
+			return "Mission 1-2: High Rescue"
+		_:
+			return "Mission 1-1: Beachhead"
+
+
 func _maybe_start_webrtc() -> void:
 	if webrtc_connected or _offer_started:
 		return
@@ -287,6 +315,12 @@ func _maybe_start_webrtc() -> void:
 	if remote_signaling_id == "":
 		return
 	_setup_webrtc_mesh()
+
+
+func _normalize_scene_id(scene_id: String) -> String:
+	if scene_id == "phase4_scene_1_2":
+		return scene_id
+	return "phase4_beachhead"
 
 
 func _setup_webrtc_mesh() -> void:

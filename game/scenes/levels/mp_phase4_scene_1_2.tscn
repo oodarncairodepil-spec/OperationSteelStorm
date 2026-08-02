@@ -1,0 +1,190 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scenes/levels/mp_phase4_scene_1_2.gd" id="1_level"]
+[ext_resource type="Script" path="res://entities/world/follow_camera.gd" id="2_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_hud.tscn" id="3_hud"]
+[ext_resource type="Script" path="res://multiplayer/host_combat_session.gd" id="4_combat"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(2400, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(24, 360)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_step"]
+size = Vector2(180, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mid"]
+size = Vector2(160, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
+size = Vector2(200, 16)
+
+[node name="MpPhase4Scene12" type="Node2D"]
+script = ExtResource("1_level")
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -20
+offset_right = 2400.0
+offset_bottom = 360.0
+color = Color(0.09, 0.19, 0.25, 1)
+mouse_filter = 2
+
+[node name="SunBand" type="ColorRect" parent="."]
+z_index = -19
+offset_right = 2400.0
+offset_bottom = 112.0
+color = Color(0.7, 0.44, 0.18, 0.42)
+mouse_filter = 2
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Floor" type="StaticBody2D" parent="World"]
+position = Vector2(1200, 348)
+collision_layer = 1
+
+[node name="Visual" type="ColorRect" parent="World/Floor"]
+offset_left = -1200.0
+offset_top = -12.0
+offset_right = 1200.0
+offset_bottom = 12.0
+color = Color(0.22, 0.34, 0.26, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="LeftWall" type="StaticBody2D" parent="World"]
+position = Vector2(-12, 180)
+collision_layer = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/LeftWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="World"]
+position = Vector2(2412, 180)
+collision_layer = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/RightWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="StepUpPlatform" type="StaticBody2D" parent="World"]
+position = Vector2(520, 300)
+collision_layer = 1
+
+[node name="Visual" type="ColorRect" parent="World/StepUpPlatform"]
+offset_left = -90.0
+offset_top = -8.0
+offset_right = 90.0
+offset_bottom = 8.0
+color = Color(0.31, 0.43, 0.35, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/StepUpPlatform"]
+shape = SubResource("RectangleShape2D_step")
+
+[node name="MidPlatform" type="StaticBody2D" parent="World"]
+position = Vector2(790, 246)
+collision_layer = 1
+
+[node name="Visual" type="ColorRect" parent="World/MidPlatform"]
+offset_left = -80.0
+offset_top = -8.0
+offset_right = 80.0
+offset_bottom = 8.0
+color = Color(0.39, 0.46, 0.34, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/MidPlatform"]
+shape = SubResource("RectangleShape2D_mid")
+
+[node name="HighPlatform" type="StaticBody2D" parent="World"]
+position = Vector2(1080, 220)
+collision_layer = 1
+
+[node name="Visual" type="ColorRect" parent="World/HighPlatform"]
+offset_left = -100.0
+offset_top = -8.0
+offset_right = 100.0
+offset_bottom = 8.0
+color = Color(0.48, 0.3, 0.22, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/HighPlatform"]
+shape = SubResource("RectangleShape2D_top")
+
+[node name="DropPlatform" type="StaticBody2D" parent="World"]
+position = Vector2(1385, 258)
+collision_layer = 1
+
+[node name="Visual" type="ColorRect" parent="World/DropPlatform"]
+offset_left = -100.0
+offset_top = -8.0
+offset_right = 100.0
+offset_bottom = 8.0
+color = Color(0.28, 0.39, 0.42, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/DropPlatform"]
+shape = SubResource("RectangleShape2D_top")
+
+[node name="ScatterCache" type="Node2D" parent="World"]
+position = Vector2(1080, 186)
+
+[node name="Visual" type="ColorRect" parent="World/ScatterCache"]
+offset_left = -18.0
+offset_top = -18.0
+offset_right = 18.0
+offset_bottom = 18.0
+color = Color(0.94, 0.78, 0.28, 1)
+
+[node name="Label" type="Label" parent="World/ScatterCache"]
+offset_left = -34.0
+offset_top = -34.0
+offset_right = 34.0
+offset_bottom = -16.0
+theme_override_font_sizes/font_size = 10
+text = "SCATTER"
+horizontal_alignment = 1
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="HostSpawn" type="Marker2D" parent="Spawns"]
+position = Vector2(96, 320)
+
+[node name="ClientSpawn" type="Marker2D" parent="Spawns"]
+position = Vector2(156, 320)
+
+[node name="MissionMarkers" type="Node2D" parent="."]
+
+[node name="ScatterPickup" type="Marker2D" parent="MissionMarkers"]
+position = Vector2(1080, 186)
+
+[node name="Captive" type="Marker2D" parent="MissionMarkers"]
+position = Vector2(1760, 320)
+
+[node name="CaptiveSafe" type="Marker2D" parent="MissionMarkers"]
+position = Vector2(1440, 320)
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Objectives" type="Node2D" parent="."]
+
+[node name="ProjectileBucket" type="Node2D" parent="." groups=["projectile_bucket"]]
+
+[node name="HostCombatSession" type="Node" parent="."]
+script = ExtResource("4_combat")
+
+[node name="FollowCamera" type="Camera2D" parent="."]
+position = Vector2(320, 180)
+script = ExtResource("2_cam")
+limit_left = 0
+limit_top = 0
+limit_right = 2400
+limit_bottom = 360
+
+[node name="GameHUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DisconnectDialog" type="AcceptDialog" parent="UI"]
+unique_name_in_owner = true
+title = "Connection Lost"
+dialog_text = "Connection lost."

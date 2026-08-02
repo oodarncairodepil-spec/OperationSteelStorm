@@ -56,7 +56,7 @@ script = ExtResource("4_weapon")
 muzzle_path = NodePath("../Muzzle")
 
 [node name="Muzzle" type="Marker2D" parent="."]
-position = Vector2(10, -22)
+position = Vector2(10, -12)
 
 [node name="AimUpMuzzle" type="Marker2D" parent="."]
-position = Vector2(4, -33)
+position = Vector2(4, -24)

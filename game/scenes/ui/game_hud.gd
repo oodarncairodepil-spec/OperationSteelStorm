@@ -18,6 +18,14 @@ signal menu_pressed
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _menu_button: Button = %MenuButton
+@onready var _touch_controls: Control = %TouchControls
+@onready var _left_button: TouchScreenButton = %LeftButton
+@onready var _right_button: TouchScreenButton = %RightButton
+@onready var _up_button: TouchScreenButton = %UpButton
+@onready var _down_button: TouchScreenButton = %DownButton
+@onready var _jump_button: TouchScreenButton = %JumpButton
+@onready var _squat_button: TouchScreenButton = %SquatButton
+@onready var _shoot_button: TouchScreenButton = %ShootButton
 
 var _weapon_override_active: bool = false
 var _bound_player: Node
@@ -25,10 +33,12 @@ var _bound_weapon: WeaponComponent
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	_result_panel.visible = false
 	_banner.text = ""
 	_restart_button.pressed.connect(func() -> void: restart_pressed.emit())
 	_menu_button.pressed.connect(func() -> void: menu_pressed.emit())
+	_configure_touch_controls()
 
 
 func bind_player(player: Node) -> void:
@@ -88,6 +98,25 @@ func show_result(won: bool, score: int, detail_text: String = "") -> void:
 	_result_label.text = ("ROOM CLEARED\nScore %d" if won else "MISSION FAILED\nScore %d") % score
 	if detail_text != "":
 		_result_label.text += "\n%s" % detail_text
+	_restart_button.grab_focus()
+
+
+func hide_result() -> void:
+	_result_panel.visible = false
+
+
+func set_result_actions(restart_text: String, menu_text: String = "Main Menu") -> void:
+	_restart_button.text = restart_text
+	_menu_button.text = menu_text
+
+
+func _configure_touch_controls() -> void:
+	var mobile := OS.has_feature("web") and JavaScriptBridge.eval("/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)")
+	_touch_controls.visible = mobile
+	if not mobile:
+		return
+	for button in [_left_button, _right_button, _up_button, _down_button, _jump_button, _squat_button, _shoot_button]:
+		button.visibility_mode = TouchScreenButton.VISIBILITY_TOUCHSCREEN_ONLY
 
 
 func _on_weapon_changed(weapon: WeaponDefinition) -> void:

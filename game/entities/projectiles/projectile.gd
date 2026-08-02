@@ -47,9 +47,11 @@ func _physics_process(delta: float) -> void:
 
 
 func despawn() -> void:
+	if not _alive:
+		return
 	_alive = false
 	set_physics_process(false)
-	queue_free()
+	call_deferred("queue_free")
 
 
 func _apply_team_collision(team: StringName) -> void:

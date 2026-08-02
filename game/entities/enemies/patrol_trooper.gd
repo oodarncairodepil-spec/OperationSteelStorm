@@ -154,7 +154,7 @@ func apply_network_death() -> void:
 	_hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	await get_tree().create_timer(0.6).timeout
-	queue_free()
+	call_deferred("queue_free")
 
 
 func _tick_patrol(_delta: float) -> void:
@@ -270,7 +270,7 @@ func _on_died() -> void:
 		return
 	if not networked:
 		await get_tree().create_timer(0.6).timeout
-		queue_free()
+		call_deferred("queue_free")
 
 
 func _apply_art_from_definition() -> void:

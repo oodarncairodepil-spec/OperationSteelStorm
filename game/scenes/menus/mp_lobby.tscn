@@ -52,6 +52,16 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Players"
 
+[node name="MissionLabel" type="Label" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Selected mission: Mission 1-1: Beachhead"
+
+[node name="MissionOption" type="OptionButton" parent="Main/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="StatusLabel" type="Label" parent="Main/Left"]
 unique_name_in_owner = true
 layout_mode = 2

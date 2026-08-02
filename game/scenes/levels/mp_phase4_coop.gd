@@ -530,6 +530,10 @@ func rpc_score_update(score: int) -> void:
 @rpc("authority", "call_local", "reliable")
 func rpc_mission_result(won: bool, score: int, detail: String) -> void:
 	_finished = true
+	call_deferred("_show_mission_result", won, score, detail)
+
+
+func _show_mission_result(won: bool, score: int, detail: String) -> void:
 	SceneManager.go_to_mission_result(won, score, detail, "phase4_coop", "Phase 4 Co-op Mission")
 
 

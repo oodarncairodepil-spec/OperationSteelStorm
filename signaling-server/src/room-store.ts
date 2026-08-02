@@ -9,6 +9,7 @@ export interface RoomPlayer {
 export interface Room {
   code: string;
   hostPeerId: string;
+  sceneId: string;
   players: Map<string, RoomPlayer>;
   updatedAt: number;
 }
@@ -27,6 +28,7 @@ export class RoomStore {
     const room: Room = {
       code,
       hostPeerId: peerId,
+      sceneId: "phase4_beachhead",
       players: new Map([
         [
           peerId,
@@ -121,6 +123,22 @@ export class RoomStore {
     player.ready = ready;
     room.updatedAt = Date.now();
     return room;
+  }
+
+  setScene(
+    peerId: string,
+    sceneId: string,
+  ): { ok: true; room: Room } | { ok: false; reason: "not_in_room" | "forbidden" } {
+    const room = this.getRoomForPeer(peerId);
+    if (!room) {
+      return { ok: false, reason: "not_in_room" };
+    }
+    if (room.hostPeerId !== peerId) {
+      return { ok: false, reason: "forbidden" };
+    }
+    room.sceneId = sceneId === "phase4_scene_1_2" ? "phase4_scene_1_2" : "phase4_beachhead";
+    room.updatedAt = Date.now();
+    return { ok: true, room };
   }
 
   toLobbyPlayers(room: Room): LobbyPlayer[] {

@@ -54,6 +54,6 @@ func _on_body_entered(body: Node2D) -> void:
 func _request_owner_despawn() -> void:
 	var owner_node := get_parent()
 	if owner_node != null and owner_node.has_method("despawn"):
-		owner_node.call("despawn")
+		owner_node.call_deferred("despawn")
 	elif owner_node != null:
-		owner_node.queue_free()
+		owner_node.call_deferred("queue_free")

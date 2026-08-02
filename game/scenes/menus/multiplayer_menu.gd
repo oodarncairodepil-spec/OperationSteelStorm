@@ -33,6 +33,7 @@ func _on_create() -> void:
 	if not NetworkManager.lobby_updated.is_connected(_on_lobby_created):
 		NetworkManager.lobby_updated.connect(_on_lobby_created)
 	NetworkManager.create_room(_name_edit.text)
+	_call_install_bridge("prepareInstallPrompt", [])
 
 
 func _on_lobby_created() -> void:
@@ -61,3 +62,9 @@ func _configure_text_input(edit: LineEdit) -> void:
 func _sanitize_player_name(value: String) -> String:
 	var cleaned := value.strip_edges()
 	return cleaned if cleaned != "" else "Operative"
+
+
+func _call_install_bridge(method: String, args: Array) -> void:
+	if not OS.has_feature("web"):
+		return
+	JavaScriptBridge.eval("window.operationSteelstormMobile && window.operationSteelstormMobile.%s(%s);" % [method, JSON.stringify(args)])

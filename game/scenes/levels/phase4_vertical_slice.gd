@@ -49,6 +49,8 @@ var _spawned_rover_wave: bool = false
 var _boss_spawned: bool = false
 var _boss_defeated: bool = false
 var _enemies_alive: int = 0
+var _result_won: bool = false
+var _death_resume_position: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -230,7 +232,12 @@ func _on_player_died() -> void:
 
 
 func _finish(won: bool) -> void:
+	if _finished:
+		return
 	_finished = true
+	_result_won = won
+	if not won and _player != null:
+		_death_resume_position = _player.global_position
 	var score := _player.score if _player else 0
 	var detail := "Rescued %d/1 | Scatter %s | Pulse %s | Boss %s" % [
 		_rescued_count,
@@ -238,7 +245,14 @@ func _finish(won: bool) -> void:
 		"Y" if _picked_rapid else "N",
 		"DOWN" if _boss_defeated else "ACTIVE",
 	]
-	SceneManager.go_to_mission_result(won, score, detail, "phase4_single", "Phase 4 Vertical Slice")
+	call_deferred("_show_finish_result", won, score, detail)
+
+
+func _show_finish_result(won: bool, score: int, detail: String) -> void:
+	get_tree().paused = true
+	_hud.set_result_actions("Play Again" if won else "Try Again", "Main Menu")
+	_hud.show_result(won, score, detail)
+	_hud.set_objective("Mission complete" if won else "You were downed")
 
 
 func _update_objective() -> void:
@@ -263,8 +277,24 @@ func _update_objective() -> void:
 
 
 func _restart() -> void:
-	SceneManager.go_to_phase4_mission()
+	if not _finished:
+		SceneManager.go_to_phase4_mission()
+		return
+	get_tree().paused = false
+	_hud.hide_result()
+	if _result_won:
+		SceneManager.go_to_phase4_mission()
+		return
+	_finished = false
+	if _player != null:
+		var revive_position := _death_resume_position if _death_resume_position != Vector2.ZERO else _spawn.global_position
+		_player.revive_full(revive_position)
+		_camera.set_target(_player)
+		_camera.global_position = _player.global_position
+	_hud.show_banner("TRY AGAIN", 1.0)
+	_update_objective()
 
 
 func _to_menu() -> void:
+	get_tree().paused = false
 	SceneManager.go_to_main_menu()
