@@ -108,6 +108,9 @@ func _spawn_player() -> void:
 	_player.global_position = _spawn.global_position
 	add_child(_player)
 	_player.died.connect(_on_player_died)
+	_player.health_changed.connect(func(cur: int, mx: int) -> void:
+		_hud.set_health(cur, mx)
+	)
 	_hud.bind_player(_player)
 	_camera.set_target(_player)
 	_camera.global_position = _player.global_position

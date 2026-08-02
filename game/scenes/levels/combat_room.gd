@@ -86,6 +86,10 @@ func _on_player_died() -> void:
 func _finish(won: bool) -> void:
 	_finished = true
 	var score := _player.score if _player else 0
+	call_deferred("_show_finish_result", won, score)
+
+
+func _show_finish_result(won: bool, score: int) -> void:
 	_hud.show_result(won, score)
 	_hud.set_objective("Room cleared" if won else "You were downed")
 

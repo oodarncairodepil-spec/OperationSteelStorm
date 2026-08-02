@@ -69,6 +69,10 @@ func bind_player(player: Node) -> void:
 
 func set_health(current_health: int, max_health: int) -> void:
 	_health_label.text = "HP %d/%d" % [current_health, max_health]
+	if _bound_player != null and _bound_player.has_method("get_health_component"):
+		var health: HealthComponent = _bound_player.get_health_component()
+		if health != null and health.is_dead:
+			return
 
 
 func set_score(score: int) -> void:
