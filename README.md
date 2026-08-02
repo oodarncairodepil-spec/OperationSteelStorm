@@ -122,6 +122,20 @@ Notes:
 - If you change exported files, re-export the Godot Web preset to refresh `game/web/`.
 - For multiplayer, start the signaling backend separately before opening the browser client.
 
+Refresh the checked-in web export after gameplay/script changes:
+
+```bash
+GODOT_BIN="/Applications/Godot.app/Contents/MacOS/Godot" ./scripts/serve-web.sh
+```
+
+or export directly from Godot Editor:
+
+- Open `game/project.godot`
+- Project → Export → `Web`
+- Export to `game/web/operation-steelstorm.html`
+
+This step is required whenever GDScript gameplay fixes must reach the browser build.
+
 Vercel deploy:
 
 - `vercel.json` builds the Godot Web export during deployment
